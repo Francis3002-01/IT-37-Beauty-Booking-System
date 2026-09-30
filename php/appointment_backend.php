@@ -1,6 +1,6 @@
 <?php
 /**
  * ==============================================================================
- * DATABASE CONNECTION CONFIGURATION (database.php) -ADDED LATER
+ * HANDLES APPOINTMENTS BACKEND (ADDED LATER)
  * ==============================================================================
  */
