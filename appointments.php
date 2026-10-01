@@ -10,9 +10,21 @@
  */
 
 $pageTitle = "Appointments - beautyReserve";
-include 'includes/header.php';
+//include 'includes/header.php';
 include 'includes/sidebar.php';
 ?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><?php echo $pageTitle ?? 'beautyReserve.'; ?></title>
+    <!-- Bootstrap 5 CSS CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom Stylesheet (Updated to match your file name) -->
+    <link href="css/appointments.css" rel="stylesheet">
+</head>
+<body>
 
 <!-- Main Content Area -->
 <div class="main-content">
