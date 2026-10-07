@@ -20,8 +20,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         <nav class="nav flex-column">
             <a class="nav-link <?php echo ($currentPage == 'appointments.php') ? 'active' : 'sub-nav'; ?>" href="appointments.php">Appointments</a>
             <a class="nav-link <?php echo ($currentPage == 'beauticians.php') ? 'active' : 'sub-nav'; ?>" href="beauticians.php">Beauticians</a>
-            <a class="nav-link <?php echo ($currentPage == 'services.php') ? 'active' : 'sub-nav'; ?>" href="#">Services</a>
-            <a class="nav-link <?php echo ($currentPage == 'clients.php') ? 'active' : 'sub-nav'; ?>" href="#">Clients</a>
+            <a class="nav-link <?php echo ($currentPage == 'services.php') ? 'active' : 'sub-nav'; ?>" href="services.php">Services</a>
+            <a class="nav-link <?php echo ($currentPage == 'clients.php') ? 'active' : 'sub-nav'; ?>" href="clients.php">Clients</a>
             <a class="nav-link <?php echo ($currentPage == 'reports.php') ? 'active' : 'sub-nav'; ?>" href="#">Reports</a>
             <a class="nav-link <?php echo ($currentPage == 'staff.php') ? 'active' : 'sub-nav'; ?>" href="#">Staff</a>
         </nav>

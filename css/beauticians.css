@@ -237,3 +237,85 @@ body {
     border-radius: 20px;
     border: none;
 }
+
+/* ================================================================
+ * BEAUTICIAN MODAL WIREFRAME STYLES
+ * ================================================================ */
+.beautician-modal-content {
+    border-radius: 20px;
+    padding: 20px;
+    border: none;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.modal-subtitle {
+    font-size: 0.875rem;
+    color: #8c8c8c !important;
+}
+
+.beautician-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #4a4a4a;
+    margin-bottom: 6px;
+}
+
+/* Muted Grey Inputs matching the wireframe */
+.beautician-input {
+    background-color: #c8beba;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
+    font-weight: 600;
+}
+
+.beautician-input:focus {
+    background-color: #b8ac87;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px rgba(100, 100, 100, 0.15);
+    color: #ffffff;
+}
+
+.beautician-input::placeholder {
+    color: #ffffff;
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+select.beautician-input {
+    color: #ffffff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Action Buttons */
+.btn-beautician-cancel {
+    background-color: #e9e3e1;
+    color: #000000;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 10px 24px;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.btn-beautician-cancel:hover {
+    background-color: #dad2d0;
+    color: #000000;
+}
+
+.btn-beautician-save {
+    background-color: #5c5856;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 10px 24px;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.btn-beautician-save:hover {
+    background-color: #484543;
+    color: #ffffff;
+}

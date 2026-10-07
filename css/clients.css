@@ -1,0 +1,130 @@
+/**
+ * CLIENTS MODULE SPECIFIC STYLESHEET
+ * ------------------------------------------------------------------
+ * Purpose: Controls layout for horizontal client stacked cards matching 
+ * the wireframe layout.
+ */
+
+/* Full-width Stacked Client Card */
+.client-row-card {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 20px 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.client-row-card:hover {
+    background-color: #f1f3f5;
+    border-color: #ced4da;
+}
+
+/* Circular Avatar Placeholder */
+.client-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #d1d5db;
+    flex-shrink: 0;
+}
+
+/* Card Content Layout */
+.client-info-wrapper {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.client-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.client-name {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+/* Action Buttons (EDIT / DELETE) */
+.client-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-card-action {
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 0.725rem;
+    font-weight: 700;
+    padding: 4px 14px;
+    color: #374151;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.2s ease;
+}
+
+.btn-card-action:hover {
+    background-color: #111827;
+    color: #ffffff;
+    border-color: #111827;
+}
+
+.btn-card-action.btn-delete:hover {
+    background-color: #dc2626;
+    color: #ffffff;
+    border-color: #dc2626;
+}
+
+/* Details Sub-row (Address & Contact Number) */
+.client-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+}
+
+.client-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.client-detail-label {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #6b7280;
+    white-space: nowrap;
+}
+
+.client-detail-bar {
+    background-color: #e5e7eb;
+    height: 8px;
+    border-radius: 4px;
+    flex-grow: 1;
+}
+
+.client-detail-value {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+@media (max-width: 768px) {
+    .client-row-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    
+    .client-details-grid {
+        grid-template-columns: 1fr;
+        gap: 8px;
+    }
+}

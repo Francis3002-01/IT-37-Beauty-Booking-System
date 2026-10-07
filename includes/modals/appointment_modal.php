@@ -15,36 +15,38 @@
         <div class="modal-content p-4">
             <h3 class="fw-bold mb-4" id="modalTitle">Create New Appointment</h3>
             <form id="appointmentForm" onsubmit="handleFormSubmit(event)">
-                <input type="hidden" id="editAppointmentId">
+                <!-- Hidden ID for Editing -->
+                <input type="hidden" id="editAppointmentId" name="editAppointmentId">
+
                 <div class="row">
                     <!-- Left Column -->
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="field-label">Last Name</label>
-                            <input type="text" class="form-control" id="clientLastName" placeholder="Enter Last Name" required>
+                            <input type="text" class="form-control" id="clientLastName" name="clientLastName" placeholder="Enter Last Name" required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">First Name</label>
-                            <input type="text" class="form-control" id="clientFirstName" placeholder="Enter First Name" required>
+                            <input type="text" class="form-control" id="clientFirstName" name="clientFirstName" placeholder="Enter First Name" required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Address</label>
-                            <input type="text" class="form-control" id="clientAddress" placeholder="Enter Address" required>
+                            <input type="text" class="form-control" id="clientAddress" name="clientAddress" placeholder="Enter Address" required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Contact No.</label>
-                            <input type="text" class="form-control" id="clientContactNo" placeholder="Enter Contact No." required>
+                            <input type="text" class="form-control" id="clientContactNo" name="clientContactNo" placeholder="Enter Contact No." required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Appointment Type</label>
-                            <select class="form-select" id="appointmentType" onchange="toggleVenueInput()" required>
+                            <select class="form-select" id="appointmentType" name="appointmentType" onchange="toggleVenueInput()" required>
                                 <option value="Salon service">Salon service</option>
                                 <option value="Home service">Home service</option>
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Appointment Notes</label>
-                            <textarea class="form-control" id="appointmentNotes" rows="4" placeholder="Special instructions, allergies, or directions..."></textarea>
+                            <textarea class="form-control" id="appointmentNotes" name="appointmentNotes" rows="4" placeholder="Special instructions, allergies, or directions..."></textarea>
                         </div>
                     </div>
 
@@ -52,24 +54,30 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="field-label">Service</label>
-                            <select class="form-select" id="serviceSelect" onchange="updateServiceCost()" required></select>
+                            <select class="form-select" id="serviceSelect" name="serviceId" onchange="updateServiceCost()" required>
+                                <option value="" disabled selected>Select a Service...</option>
+                                <!-- Populated dynamically by JS -->
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Resource (Beautician)</label>
-                            <select class="form-select" id="resourceSelect" onchange="validateAvailability()" required></select>
+                            <select class="form-select" id="resourceSelect" name="resourceId" onchange="validateAvailability()" required>
+                                <option value="" disabled selected>Select a Beautician...</option>
+                                <!-- Populated dynamically by JS -->
+                            </select>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Date</label>
-                            <input type="date" class="form-control" id="appointmentDate" onchange="validateAvailability()" required>
+                            <input type="date" class="form-control" id="appointmentDate" name="appointmentDate" onchange="validateAvailability()" required>
                         </div>
                         <div class="row">
                             <div class="col-6 mb-3">
                                 <label class="field-label">Start Time</label>
-                                <input type="time" class="form-control" id="startTime" onchange="validateAvailability()" required>
+                                <input type="time" class="form-control" id="startTime" name="startTime" onchange="validateAvailability()" required>
                             </div>
                             <div class="col-6 mb-3">
                                 <label class="field-label">End Time</label>
-                                <input type="time" class="form-control" id="endTime" onchange="validateAvailability()" required>
+                                <input type="time" class="form-control" id="endTime" name="endTime" onchange="validateAvailability()" required>
                             </div>
                         </div>
                         <div class="mb-3">
@@ -79,11 +87,11 @@
                         </div>
                         <div class="mb-3" id="venueWrapper" style="display: none;">
                             <label class="field-label">Venue (Required for Home Service)</label>
-                            <input type="text" class="form-control" id="venueInput" placeholder="Enter home service address">
+                            <input type="text" class="form-control" id="venueInput" name="venueInput" placeholder="Enter home service address">
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Payment Method</label>
-                            <select class="form-select" id="paymentMethod" required>
+                            <select class="form-select" id="paymentMethod" name="paymentMethod" required>
                                 <option value="Cash">Cash</option>
                                 <option value="Bank Transfer">Bank Transfer</option>
                                 <option value="E-Wallet">E-Wallet</option>
@@ -91,7 +99,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Payment Status</label>
-                            <select class="form-select" id="paymentStatus" required>
+                            <select class="form-select" id="paymentStatus" name="paymentStatus" required>
                                 <option value="Unpaid">Unpaid</option>
                                 <option value="Paid">Paid</option>
                             </select>

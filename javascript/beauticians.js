@@ -241,48 +241,25 @@ function filterBeauticians() {
 // ================================================================
 // 7. CREATE BEAUTICIAN
 // ================================================================
-
 function openCreateModal() {
-
     const form = document.getElementById("beauticianForm");
+    if (form) form.reset();
 
-    if (form) {
-        form.reset();
-    }
+    const title = document.getElementById("modalTitle");
+    if (title) title.innerText = "Add New Beauticians";
 
-    const modalTitle =
-        document.getElementById("modalTitle");
+    const saveBtn = document.getElementById("saveBeauticianBtn");
+    if (saveBtn) saveBtn.innerText = "Save Beautician";
 
-    const saveButton =
-        document.getElementById("saveBeauticianBtn");
+    const editId = document.getElementById("editBeauticianId");
+    if (editId) editId.value = "";
 
-    const editID =
-        document.getElementById("editBeauticianId");
-
-    if (modalTitle) {
-        modalTitle.innerText = "Add New Beautician";
-    }
-
-    if (saveButton) {
-        saveButton.innerText = "Add Beautician";
-    }
-
-    if (editID) {
-        editID.value = "";
-    }
-
-    if (typeof bootstrap !== "undefined") {
-
-        const modalElement =
-            document.getElementById("beauticianModal");
-
-        if (modalElement) {
-            new bootstrap.Modal(modalElement).show();
-        }
-
+    const modalEl = document.getElementById("beauticianModal");
+    if (modalEl) {
+        const modalInstance = bootstrap.Modal.getOrCreateInstance(modalEl);
+        modalInstance.show();
     }
 }
-
 
 // ================================================================
 // 8. VIEW BEAUTICIAN

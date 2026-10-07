@@ -35,7 +35,7 @@ include 'includes/sidebar.php';
         <!-- Top Search & Create Bar -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <input type="text" id="searchInput" class="search-pill" placeholder="Search beauticians..." oninput="filterBeauticians()">
-            <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#beauticianModal" onclick="openCreateModal()">Add New Beautician</button>
+            <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Beautician</button>
         </div>
 
         <!-- Filter Pills -->
@@ -54,7 +54,7 @@ include 'includes/sidebar.php';
 </div>
 
 <!-- Modals Subfolder Include -->
-
+<?php include 'includes/modals/beauticians_modal.php'; ?>
 
 <!-- Javascript Logic -->
 <script src="javascript/beauticians.js"></script>

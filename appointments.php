@@ -10,7 +10,7 @@
  */
 
 $pageTitle = "Appointments - beautyReserve";
-//include 'includes/header.php';
+
 include 'includes/sidebar.php';
 ?>
 <!DOCTYPE html>
