@@ -22,8 +22,8 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <a class="nav-link <?php echo ($currentPage == 'beauticians.php') ? 'active' : 'sub-nav'; ?>" href="beauticians.php">Beauticians</a>
             <a class="nav-link <?php echo ($currentPage == 'services.php') ? 'active' : 'sub-nav'; ?>" href="services.php">Services</a>
             <a class="nav-link <?php echo ($currentPage == 'clients.php') ? 'active' : 'sub-nav'; ?>" href="clients.php">Clients</a>
-            <a class="nav-link <?php echo ($currentPage == 'reports.php') ? 'active' : 'sub-nav'; ?>" href="#">Reports</a>
-            <a class="nav-link <?php echo ($currentPage == 'staff.php') ? 'active' : 'sub-nav'; ?>" href="#">Staff</a>
+            <a class="nav-link <?php echo ($currentPage == 'reports.php') ? 'active' : 'sub-nav'; ?>" href="reports.php">Reports</a>
+            <a class="nav-link <?php echo ($currentPage == 'staff.php') ? 'active' : 'sub-nav'; ?>" href="staff.php">Staff</a>
         </nav>
 
         <div class="nav-section-title mt-4">My Account</div>

@@ -1,0 +1,103 @@
+/**
+ * BEAUTY RESERVE - STAFF MODULE STYLESHEET
+ * ------------------------------------------------------------------
+ * Purpose: Custom card layout matching the Staff grid mockup.
+ */
+
+/* Staff Card Container */
+.staff-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 24px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.staff-card:hover {
+    border-color: #ced4da;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* Avatar Image & Header Section */
+.staff-avatar {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.staff-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 2px;
+}
+
+.staff-role {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Status Pill Badge */
+.status-badge {
+    background-color: #000000;
+    color: #ffffff;
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 4px 12px;
+    border-radius: 50rem;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+}
+
+.status-badge.on-leave {
+    background-color: #6c757d;
+}
+
+.status-badge.inactive {
+    background-color: #e03131;
+}
+
+/* Field Rows inside Card */
+.staff-details-list {
+    border-top: 1px solid #f1f3f5;
+    border-bottom: 1px solid #f1f3f5;
+    padding: 12px 0;
+    margin: 16px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.detail-row {
+    display: flex;
+    align-items: center;
+    font-size: 0.85rem;
+}
+
+.detail-label {
+    width: 130px;
+    color: #6c757d;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+
+.detail-value {
+    color: #000000;
+    font-weight: 500;
+    word-break: break-word;
+}
+
+/* Card Actions Footer */
+.staff-card-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
