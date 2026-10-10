@@ -1,204 +1,128 @@
-/**
- * CLIENTS MODULE JAVASCRIPT LOGIC
- * ------------------------------------------------------------------
- * Purpose: Manages client listings, searches, filter sorting, modal forms,
- * and CRUD actions using mock data ready for MySQL database connection.
- */
+// PHP renders client records. JavaScript handles search, sorting and modals.
 
-// ------------------------------------------------------------------
-// 1. HARDCODED IN-MEMORY DATABASE (MOCK DATA)
-// ------------------------------------------------------------------
-const clientDb = {
-    clients: [
-        { clientID: 1, lastName: 'Pham', firstName: 'Hanni', address: '123 Hibiscus St., Dumaguete City', contactNo: '09171234567', dateCreated: '2026-01-10' },
-        { clientID: 2, lastName: 'Smith', firstName: 'Jane', address: '456 Real St., Dumaguete City', contactNo: '09987654321', dateCreated: '2026-03-15' },
-        { clientID: 3, lastName: 'Johnson', firstName: 'Michael', address: 'Poblacion, Valencia', contactNo: '09112233445', dateCreated: '2026-05-20' },
-        { clientID: 4, lastName: 'Santos', firstName: 'Maria', address: 'Main Highway, Dauin', contactNo: '09223344556', dateCreated: '2026-07-08' },
-        { clientID: 5, lastName: 'Reyes', firstName: 'Carlo', address: 'Bagacay, Dumaguete City', contactNo: '09334455667', dateCreated: '2026-09-01' }
-    ]
-};
-
-let currentFilter = 'All';
-let deleteClientTargetId = null;
-
-document.addEventListener('DOMContentLoaded', () => {
-    renderClients();
-});
-
-// ------------------------------------------------------------------
-// 2. RENDERING LOGIC (MATCHING WIREFRAME LAYOUT)
-// ------------------------------------------------------------------
-function renderClients(filteredList = null) {
-    const listContainer = document.getElementById('clientsList');
-    if (!listContainer) return;
-
-    const list = filteredList || clientDb.clients;
-
-    if (list.length === 0) {
-        listContainer.innerHTML = `<div class="text-center text-muted py-5">No clients found.</div>`;
-        return;
+function clearClientValidation()
+{
+    const fields = ['clientFirstName', 'clientLastName', 'clientAddress', 'clientContactNo'];
+    for (let index = 0; index < fields.length; index++) {
+        document.getElementById(fields[index]).setCustomValidity('');
     }
-
-    listContainer.innerHTML = list.map(client => {
-        return `
-            <div class="client-row-card">
-                <!-- Circular Avatar Placeholder -->
-                <div class="client-avatar-placeholder"></div>
-
-                <!-- Info Wrapper -->
-                <div class="client-info-wrapper">
-                    <!-- Top Row: Name and Edit/Delete Buttons -->
-                    <div class="client-card-header">
-                        <h3 class="client-name">${client.firstName} ${client.lastName}</h3>
-                        <div class="client-actions">
-                            <button class="btn-card-action" onclick="editClient(${client.clientID})">Edit</button>
-                            <button class="btn-card-action btn-delete" onclick="confirmDeleteClient(${client.clientID})">Delete</button>
-                        </div>
-                    </div>
-
-                    <!-- Bottom Details: Address and Contact Number -->
-                    <div class="client-details-grid">
-                        <div class="client-detail-item">
-                            <span class="client-detail-label">Address</span>
-                            <span class="client-detail-value">${client.address}</span>
-                        </div>
-                        <div class="client-detail-item">
-                            <span class="client-detail-label">Contact Number</span>
-                            <span class="client-detail-value">${client.contactNo}</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
-    }).join('');
 }
 
-// ------------------------------------------------------------------
-// 3. FILTERING AND SEARCH LOGIC
-// ------------------------------------------------------------------
-function setFilter(filterType, btn) {
-    document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
-    btn.classList.add('active');
-    currentFilter = filterType;
-    filterClients();
-}
-
-function filterClients() {
-    const query = document.getElementById('searchInput').value.toLowerCase().trim();
-    let result = [...clientDb.clients];
-
-    // Apply Sorting/Filtering Options
-    if (currentFilter === 'Recent') {
-        result.sort((a, b) => new Date(b.dateCreated) - new Date(a.dateCreated));
-    } else if (currentFilter === 'AZ') {
-        // Sort by full displayed name (First Name Last Name)
-        result.sort((a, b) => {
-            const nameA = `${a.firstName} ${a.lastName}`;
-            const nameB = `${b.firstName} ${b.lastName}`;
-            return nameA.localeCompare(nameB);
-        });
-    }
-
-    // Apply Search Query
-    if (query !== '') {
-        result = result.filter(c => 
-            c.firstName.toLowerCase().includes(query) ||
-            c.lastName.toLowerCase().includes(query) ||
-            c.address.toLowerCase().includes(query) ||
-            c.contactNo.includes(query)
-        );
-    }
-
-    renderClients(result);
-}
-
-// ------------------------------------------------------------------
-// 4. CRUD & MODAL ACTIONS (DATABASE READY)
-// ------------------------------------------------------------------
-function openCreateModal() {
-    const title = document.getElementById('clientModalTitle');
-    const form = document.getElementById('clientForm');
-    if (title) title.innerText = 'Add New Client';
-    if (form) form.reset();
-    document.getElementById('editClientId').value = '';
-}
-
-function editClient(id) {
-    const client = clientDb.clients.find(c => c.clientID === id);
-    if (!client) return;
-
-    document.getElementById('clientModalTitle').innerText = `Edit Client (${client.firstName} ${client.lastName})`;
-    document.getElementById('editClientId').value = client.clientID;
-    
-    // Match the HTML modal IDs ('clientName' and 'clientPhone')
-    document.getElementById('clientName').value = `${client.firstName} ${client.lastName}`;
-    document.getElementById('clientPhone').value = client.contactNo;
-    document.getElementById('clientAddress').value = client.address;
-
-    const modalEl = document.getElementById('clientModal');
-    if (modalEl) new bootstrap.Modal(modalEl).show();
-}
-
-function handleClientFormSubmit(event) {
-    event.preventDefault();
-
-    const editId = document.getElementById('editClientId').value;
-    const fullName = document.getElementById('clientName').value.trim();
-    const contactNo = document.getElementById('clientPhone').value;
-    const address = document.getElementById('clientAddress').value;
-
-    // Split Full Name into First and Last name for your database structure
-    const nameParts = fullName.split(' ');
-    const firstName = nameParts[0] || '';
-    const lastName = nameParts.slice(1).join(' ') || '';
-
-    if (editId) {
-        // Edit Existing Client
-        const client = clientDb.clients.find(c => c.clientID == editId);
-        if (client) {
-            client.firstName = firstName;
-            client.lastName = lastName;
-            client.address = address;
-            client.contactNo = contactNo;
+function validateClientForm()
+{
+    clearClientValidation();
+    const names = ['clientFirstName', 'clientLastName'];
+    for (let index = 0; index < names.length; index++) {
+        const field = document.getElementById(names[index]);
+        const name = field.value.trim();
+        if (!/\p{L}/u.test(name) || !/^[\p{L}\p{M} .’'\-]+$/u.test(name)) {
+            field.setCustomValidity('Enter letters; spaces, apostrophes, periods and hyphens are allowed.');
         }
-    } else {
-        // Create New Client
-        const newClient = {
-            clientID: clientDb.clients.length + 1,
-            firstName,
-            lastName,
-            address,
-            contactNo,
-            dateCreated: new Date().toISOString().split('T')[0]
-        };
-        clientDb.clients.push(newClient);
     }
+    const address = document.getElementById('clientAddress');
+    const text = address.value.trim();
+    if (!/\p{L}/u.test(text) || !/^[\p{L}\p{M}\p{N} .,\r\n’'\-\/#():]+$/u.test(text)) {
+        address.setCustomValidity('Enter an address containing letters, with ordinary numbers and punctuation.');
+    }
+    const contact = document.getElementById('clientContactNo');
+    if (!/^[0-9]{11}$/.test(contact.value.trim())) {
+        contact.setCustomValidity('Enter exactly 11 digits.');
+    }
+    return document.getElementById('clientForm').reportValidity();
+}
 
-    const modalEl = document.getElementById('clientModal');
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    if (modal) modal.hide();
+//hide the success/error message after the page loads cz it keeps showing up whenever i reload dawg
+function hideClientFeedback()
+{
+    const feedback = document.getElementById('clientFeedback');
+    if (feedback) feedback.style.display = 'none';
+}
 
+setTimeout(hideClientFeedback, 3000); //set the timeout to 3 seconds after notifying outcomes
+ 
+function filterClients() //filter services based on search input
+{
+    const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const records = document.getElementsByClassName('client-record');
+    let visibleCount = 0;
+    for (let index = 0; index < records.length; index++) {
+        const record = records[index];
+        const text = (record.getAttribute('data-first-name') + ' ' + record.getAttribute('data-last-name')
+            + ' ' + record.getAttribute('data-address') + ' ' + record.getAttribute('data-contact')).toLowerCase();
+        if (text.includes(query)) {
+            record.style.display = '';
+            visibleCount++;
+        } else {
+            record.style.display = 'none';
+        }
+    }
+    document.getElementById('noClientsMessage').hidden = visibleCount > 0;
+}
+
+function clientComesBefore(first, second, sortType) //sort client list from A-Z or by recent addition
+{
+    if (sortType === 'AZ') {
+        const firstName = first.getAttribute('data-first-name') + ' ' + first.getAttribute('data-last-name');
+        const secondName = second.getAttribute('data-first-name') + ' ' + second.getAttribute('data-last-name');
+        return firstName.localeCompare(secondName) < 0;
+    }
+    // The table has no creation date; newer auto-increment IDs come first.
+    if (sortType === 'Recent') {
+        return Number(first.getAttribute('data-id')) > Number(second.getAttribute('data-id'));
+    }
+    return Number(first.getAttribute('data-id')) < Number(second.getAttribute('data-id'));
+}
+
+function setFilter(sortType, button)
+{
+    const buttons = document.getElementsByClassName('filter-pill');
+    for (let index = 0; index < buttons.length; index++) buttons[index].classList.remove('active');
+    button.classList.add('active');
+    const records = document.getElementsByClassName('client-record');
+    const sorted = [];
+    // Insertion sort keeps the code step-by-step without complex callbacks.
+    for (let index = 0; index < records.length; index++) {
+        const record = records[index];
+        let position = sorted.length;
+        while (position > 0 && clientComesBefore(record, sorted[position - 1], sortType)) {
+            sorted[position] = sorted[position - 1];
+            position--;
+        }
+        sorted[position] = record;
+    }
+    const list = document.getElementById('clientsList');
+    for (let index = 0; index < sorted.length; index++) list.appendChild(sorted[index]);
     filterClients();
 }
 
-function confirmDeleteClient(id) {
-    deleteClientTargetId = id;
-    const textEl = document.getElementById('deleteClientIdText');
-    if (textEl) textEl.innerText = `#${id}`;
-    
-    const modalEl = document.getElementById('deleteClientConfirmModal');
-    if (modalEl) new bootstrap.Modal(modalEl).show();
+function openCreateModal()
+{
+    document.getElementById('clientForm').reset();
+    clearClientValidation();
+    document.getElementById('editClientId').value = '';
+    document.getElementById('clientAction').value = 'create';
+    document.getElementById('clientModalTitle').textContent = 'Add New Client';
+    document.getElementById('saveClientBtn').textContent = 'Add Client';
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('clientModal')).show();
 }
-
-function executeDeleteClient() {
-    if (deleteClientTargetId) {
-        clientDb.clients = clientDb.clients.filter(c => c.clientID !== deleteClientTargetId);
-        deleteClientTargetId = null;
-
-        const modalEl = document.getElementById('deleteClientConfirmModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        if (modal) modal.hide();
-
-        filterClients();
-    }
+function editClient(id)
+{
+    const record = document.getElementById('client-' + id);
+    if (!record) return;
+    document.getElementById('clientForm').reset();
+    clearClientValidation();
+    document.getElementById('editClientId').value = id;
+    document.getElementById('clientAction').value = 'edit';
+    document.getElementById('clientFirstName').value = record.getAttribute('data-first-name');
+    document.getElementById('clientLastName').value = record.getAttribute('data-last-name');
+    document.getElementById('clientAddress').value = record.getAttribute('data-address');
+    document.getElementById('clientContactNo').value = record.getAttribute('data-contact');
+    document.getElementById('clientModalTitle').textContent = 'Edit Client';
+    document.getElementById('saveClientBtn').textContent = 'Save Changes';
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('clientModal')).show();
 }
+function confirmClientDelete()
+{
+    return confirm('Request deletion of this client? Clients used in appointments cannot be deleted.');
+}
+filterClients();
