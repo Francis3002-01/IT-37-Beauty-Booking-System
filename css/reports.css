@@ -1,0 +1,337 @@
+/**
+ * BEAUTY RESERVE - MASTER & MODULE STYLESHEET
+ * ------------------------------------------------------------------
+ * Purpose: Styling specifically tailored to match the Service Card Grid 
+ * layout mockup across all dashboard modules (Layout, Services, Reports).
+ */
+
+/* General Body & Page Resets */
+body {
+    background-color: #f4f5f7;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #000000;
+    margin: 0;
+    padding: 0;
+}
+
+/* Sidebar Navigation */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e9ecef;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 16px;
+    z-index: 1000;
+}
+
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #000000;
+    margin-bottom: 24px;
+    padding-left: 12px;
+}
+
+.nav-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 600;
+    padding-left: 12px;
+    margin-bottom: 8px;
+}
+
+.nav-link {
+    color: #495057;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.nav-link:hover, 
+.nav-link.active {
+    background-color: #f1f3f5;
+    color: #000000;
+}
+
+.nav-link.active {
+    font-weight: 600;
+}
+
+/* Main Layout Wrapper */
+.main-content {
+    margin-left: 260px;
+    padding: 32px;
+}
+
+.dashboard-card {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    min-height: 90vh;
+}
+
+/* Top Controls (Search, Buttons, Filter Pills) */
+.search-pill {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 50rem;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 320px;
+    outline: none;
+    font-size: 0.875rem;
+    transition: border-color 0.2s ease, background-color 0.2s ease;
+}
+
+.search-pill:focus {
+    border-color: #ced4da;
+    background-color: #ffffff;
+}
+
+.btn-create {
+    background-color: #000000;
+    color: #ffffff;
+    border-radius: 50rem;
+    padding: 10px 24px;
+    font-weight: 600;
+    font-size: 0.875rem;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.btn-create:hover {
+    background-color: #212529;
+    color: #ffffff;
+}
+
+.filter-pill {
+    background-color: #f1f3f5;
+    border: none;
+    border-radius: 50rem;
+    padding: 6px 18px;
+    font-size: 0.875rem;
+    color: #6c757d;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.filter-pill:hover {
+    background-color: #e9ecef;
+    color: #000000;
+}
+
+.filter-pill.active {
+    background-color: #dee2e6;
+    color: #000000;
+    font-weight: 600;
+}
+
+/* Service Card Container */
+.service-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 20px;
+    margin-bottom: 24px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.service-card:hover {
+    border-color: #ced4da;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+}
+
+/* Skeleton / Image Placeholder Box */
+.service-image-placeholder {
+    width: 100%;
+    height: 180px;
+    background-color: #f4f5f7;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #adb5bd;
+    font-size: 0.875rem;
+    overflow: hidden;
+}
+
+.service-image-placeholder img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Service Metadata & Typography */
+.service-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #000000;
+    margin-bottom: 4px;
+}
+
+.service-meta {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+
+.service-description {
+    font-size: 0.875rem;
+    color: #6c757d;
+    line-height: 1.5;
+    margin-bottom: 16px;
+    min-height: 2.6em; /* Keeps uniform card heights */
+}
+
+/* Price & Tag Area */
+.service-price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.service-type-tag {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 50rem;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    color: #6c757d;
+    min-width: 80px;
+    height: 28px;
+    display: inline-block;
+}
+
+.service-price {
+    font-size: 1.2rem;
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: -0.3px;
+}
+
+/* Action Buttons Divider */
+.service-card-footer {
+    border-top: 1px solid #f1f3f5;
+    padding-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* Report Section Container */
+.report-section-card {
+    background-color: #ffffff;
+    border: 1px solid #e9ecef;
+    border-radius: 20px;
+    padding: 24px;
+    margin-bottom: 24px;
+}
+
+/* Date Range Pill Display */
+.date-range-pill {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 50rem;
+    padding: 6px 18px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #6c757d;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+/* Statistic Metric Boxes */
+.stat-box {
+    background-color: #f4f5f7;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 24px 20px;
+    text-align: center;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-box:hover {
+    border-color: #ced4da;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+    transform: translateY(-2px);
+    background-color: #ffffff;
+}
+
+.stat-number {
+    font-size: 2.25rem;
+    font-weight: 800;
+    color: #000000;
+    letter-spacing: -1px;
+    line-height: 1.1;
+    margin-bottom: 6px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+    font-weight: 500;
+}
+
+/* Performance Row Items (Beautician & Client Progress Lists) */
+.performance-item {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 14px;
+    padding: 12px 16px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: border-color 0.2s ease;
+}
+
+.performance-item:hover {
+    border-color: #ced4da;
+}
+
+.performance-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #f4f5f7;
+    object-fit: cover;
+    flex-shrink: 0;
+}
+
+.performance-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #000000;
+}
+
+.performance-bar-bg {
+    height: 8px;
+    background-color: #e9ecef;
+    border-radius: 50rem;
+    overflow: hidden;
+    width: 100%;
+}
+
+.performance-bar-fill {
+    height: 100%;
+    background-color: #000000;
+    border-radius: 50rem;
+    transition: width 0.4s ease;
+}
