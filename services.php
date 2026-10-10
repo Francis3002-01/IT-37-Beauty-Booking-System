@@ -1,18 +1,14 @@
 <?php
-
-/**
- * MAIN SERVICES DASHBOARD VIEW
+/* TAB VIEW FOR SERVICES
  * ------------------------------------------------------------------
- * Purpose: Serves as the main page for managing salon services.
- * Architecture: 
- * - Acts as the visual shell. It relies on PHP includes for layout components 
- *   (Header, Sidebar, Modals, Footer) and JavaScript for dynamic content rendering.
- */
+ * Main tab for managing salon services.
+ * Acts as the visual shell. It relies on PHP includes for layout components (Header, Sidebar, Modals, Footer) and JavaScript for dynamic content rendering.
+  */
+
 
 $pageTitle = "Services - beautyReserve";
 
-//config
-
+//config db
 require_once __DIR__ . '/config/database.php';
 
 $result = $conn->query(
