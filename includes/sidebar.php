@@ -9,8 +9,6 @@ $currentPage = basename($_SERVER['PHP_SELF']);
  * 1. Keeps navigation uniform across all admin and user pages.
  * 2. Adding a new module or link in the future only requires modifying this single file.
  */
-
-
 ?>
 <div class="sidebar">
     <div>
@@ -32,12 +30,20 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         </nav>
     </div>
 
-    <!-- User Profile Box -->
-    <div class="user-profile-box">
-        <div class="user-avatar"></div>
-        <div>
-            <div class="fw-bold fs-6"><?php echo $_SESSION['user_name'] ?? 'John Francis'; ?></div>
-            <div class="text-muted" style="font-size: 0.75rem;"><?php echo $_SESSION['user_role'] ?? 'Administrator'; ?></div>
+    <!-- User Profile & Black Sign Out Button -->
+    <div class="user-profile border-top pt-3 mt-3">
+        <div class="d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+                <div class="avatar-circle"></div>
+                <div>
+                    <h6 class="mb-0 fw-bold"><?php echo $_SESSION['user_name'] ?? 'John Francis'; ?></h6>
+                    <small class="text-muted"><?php echo $_SESSION['user_role'] ?? 'Administrator'; ?></small>
+                </div>
+            </div>
+            <!-- Black Sign Out Button -->
+            <a href="includes/logout.php" class="btn btn-sm btn-dark" title="Sign Out">
+                <i class="bi bi-box-arrow-right"></i> Sign Out
+            </a>
         </div>
     </div>
 </div>
