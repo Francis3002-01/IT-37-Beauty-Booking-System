@@ -129,10 +129,11 @@ function editClient(id) {
 
     document.getElementById('clientModalTitle').innerText = `Edit Client (${client.firstName} ${client.lastName})`;
     document.getElementById('editClientId').value = client.clientID;
-    document.getElementById('clientFirstName').value = client.firstName;
-    document.getElementById('clientLastName').value = client.lastName;
+    
+    // Match the HTML modal IDs ('clientName' and 'clientPhone')
+    document.getElementById('clientName').value = `${client.firstName} ${client.lastName}`;
+    document.getElementById('clientPhone').value = client.contactNo;
     document.getElementById('clientAddress').value = client.address;
-    document.getElementById('clientContactNo').value = client.contactNo;
 
     const modalEl = document.getElementById('clientModal');
     if (modalEl) new bootstrap.Modal(modalEl).show();
@@ -142,10 +143,14 @@ function handleClientFormSubmit(event) {
     event.preventDefault();
 
     const editId = document.getElementById('editClientId').value;
-    const firstName = document.getElementById('clientFirstName').value;
-    const lastName = document.getElementById('clientLastName').value;
+    const fullName = document.getElementById('clientName').value.trim();
+    const contactNo = document.getElementById('clientPhone').value;
     const address = document.getElementById('clientAddress').value;
-    const contactNo = document.getElementById('clientContactNo').value;
+
+    // Split Full Name into First and Last name for your database structure
+    const nameParts = fullName.split(' ');
+    const firstName = nameParts[0] || '';
+    const lastName = nameParts.slice(1).join(' ') || '';
 
     if (editId) {
         // Edit Existing Client
