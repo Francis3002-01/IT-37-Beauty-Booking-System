@@ -28,7 +28,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 
         <div class="nav-section-title mt-4">My Account</div>
         <nav class="nav flex-column">
-            <a class="nav-link <?php echo ($currentPage == 'profile.php') ? 'active' : ''; ?>" href="#">Profile Settings</a>
+            <a class="nav-link <?php echo ($currentPage == 'profile-settings.php') ? 'active' : ''; ?>" href="profile-settings.php">Profile Settings</a>
         </nav>
     </div>
 

@@ -254,11 +254,12 @@ function openCreateModal() {
 // ================================================================
 // 8. EDIT STAFF
 // ================================================================
+// ================================================================
+// 8. EDIT STAFF (Fixed to safely handle file input limits)
+// ================================================================
 
 function editStaff(id) {
-
     const member = staffList.find(item => item.staffID === id);
-
     if (!member) return;
 
     document.getElementById("editStaffId").value = member.staffID;
@@ -267,6 +268,12 @@ function editStaff(id) {
     document.getElementById("status").value = member.status;
     document.getElementById("address").value = member.address;
     document.getElementById("contactNumber").value = member.contactNumber;
+
+    // Clear the file input visually since browsers block pre-filling file selectors
+    const avatarFileInput = document.getElementById("avatarFile");
+    if (avatarFileInput) {
+        avatarFileInput.value = "";
+    }
 
     document.getElementById("modalTitle").innerText = "Edit Staff";
     document.getElementById("saveStaffBtn").innerText = "Save Changes";
@@ -281,7 +288,7 @@ function editStaff(id) {
 
 
 // ================================================================
-// 9. SAVE / UPDATE HANDLER
+// 9. SAVE / UPDATE HANDLER (Preserves existing avatar if no new file is chosen)
 // ================================================================
 
 function handleFormSubmit(e) {
@@ -293,6 +300,83 @@ function handleFormSubmit(e) {
     const status = document.getElementById("status").value;
     const address = document.getElementById("address").value;
     const contact = document.getElementById("contactNumber").value;
+    
+    const avatarFileInput = document.getElementById("avatarFile");
+    let newAvatarUrl = "";
+
+    // Check if the user selected a new profile picture file
+    if (avatarFileInput && avatarFileInput.files && avatarFileInput.files[0]) {
+        newAvatarUrl = URL.createObjectURL(avatarFileInput.files[0]);
+    }
+
+    if (editID) {
+        // Edit existing staff member
+        const member = staffList.find(item => item.staffID === parseInt(editID));
+        if (member) {
+            member.staffName = name;
+            member.role = role;
+            member.status = status;
+            
+            // Only update avatar if a new image was uploaded; otherwise, keep the old one!
+            if (newAvatarUrl) {
+                member.avatar = newAvatarUrl;
+            }
+
+            member.address = address;
+            member.contactNumber = contact;
+        }
+    } else {
+        // Create new staff member
+        const newID = staffList.length > 0 ? Math.max(...staffList.map(s => s.staffID)) + 1 : 1;
+        staffList.push({
+            staffID: newID,
+            staffName: name,
+            role: role,
+            status: status,
+            avatar: newAvatarUrl, // Will use the new file preview or stay blank
+            address: address,
+            contactNumber: contact,
+            dateJoined: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
+        });
+    }
+
+    // Hide modal
+    const modalElement = document.getElementById("staffModal");
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+        modalInstance.hide();
+    }
+
+    // Reset file input
+    if (avatarFileInput) {
+        avatarFileInput.value = "";
+    }
+
+    filterStaff();
+}
+
+
+// ================================================================
+// 9. SAVE / UPDATE HANDLER (Updated to handle local image files)
+// ================================================================
+
+function handleFormSubmit(e) {
+    e.preventDefault();
+
+    const editID = document.getElementById("editStaffId").value;
+    const name = document.getElementById("staffName").value;
+    const role = document.getElementById("role").value;
+    const status = document.getElementById("status").value;
+    const address = document.getElementById("address").value;
+    const contact = document.getElementById("contactNumber").value;
+    
+    const avatarFileInput = document.getElementById("avatarFile");
+    let avatarUrl = "";
+
+    // If a local file was selected, create a temporary preview URL for frontend testing
+    if (avatarFileInput && avatarFileInput.files && avatarFileInput.files[0]) {
+        avatarUrl = URL.createObjectURL(avatarFileInput.files[0]);
+    }
 
     if (editID) {
         // Edit existing
@@ -301,6 +385,9 @@ function handleFormSubmit(e) {
             member.staffName = name;
             member.role = role;
             member.status = status;
+            if (avatarUrl) {
+                member.avatar = avatarUrl; // Update avatar only if a new file was chosen
+            }
             member.address = address;
             member.contactNumber = contact;
         }
@@ -312,10 +399,10 @@ function handleFormSubmit(e) {
             staffName: name,
             role: role,
             status: status,
+            avatar: avatarUrl, // Will use the local file URL or remain blank
             address: address,
             contactNumber: contact,
-            dateJoined: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }),
-            avatar: ""
+            dateJoined: new Date().toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' })
         });
     }
 
@@ -324,6 +411,11 @@ function handleFormSubmit(e) {
     const modalInstance = bootstrap.Modal.getInstance(modalElement);
     if (modalInstance) {
         modalInstance.hide();
+    }
+
+    // Reset file input value
+    if (avatarFileInput) {
+        avatarFileInput.value = "";
     }
 
     filterStaff();

@@ -32,7 +32,7 @@ const beauticians = [
         resourceID: 4,
         firstName: "Sofia",
         lastName: "Garcia",
-        resourceType: "Nail Specialist"
+        resourceType: "Makeup Artist"
     },
     {
         resourceID: 5,
@@ -44,7 +44,7 @@ const beauticians = [
         resourceID: 6,
         firstName: "Isabella",
         lastName: "Reyes",
-        resourceType: "Nail Specialist"
+        resourceType: "Hair Stylist"
     }
 ];
 

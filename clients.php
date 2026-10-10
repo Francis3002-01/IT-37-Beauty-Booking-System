@@ -19,8 +19,6 @@ include 'includes/sidebar.php';
     <title><?php echo $pageTitle ?? 'beautyReserve.'; ?></title>
     <!-- Bootstrap 5 CSS CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom Appointments & Shared Dashboard CSS -->
-    <link href="css/appointments.css" rel="stylesheet">
     <!-- Module Specific CSS for Clients -->
     <link href="css/clients.css" rel="stylesheet">
 </head>
@@ -52,6 +50,7 @@ include 'includes/sidebar.php';
 </div>
 
 <!-- Modals Include -->
+<?php include 'includes/modals/clients_modal.php'; ?>
 
 <!-- Bootstrap 5 JS CDN -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>

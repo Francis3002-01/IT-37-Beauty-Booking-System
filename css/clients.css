@@ -1,9 +1,146 @@
 /**
- * CLIENTS MODULE SPECIFIC STYLESHEET
+ * CLIENTS MODULE SPECIFIC & LAYOUT STYLESHEET (`css/clients.css`)
  * ------------------------------------------------------------------
- * Purpose: Controls layout for horizontal client stacked cards matching 
- * the wireframe layout.
+ * Purpose: Controls layout structure, sidebar navigation, custom UI components,
+ * and horizontal client stacked cards.
  */
+
+/* General Styling */
+body {
+    background-color: #f4f5f7;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #212529;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e9ecef;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 16px;
+    z-index: 1000;
+}
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #000000;
+    margin-bottom: 24px;
+    padding-left: 12px;
+}
+.nav-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 600;
+    padding-left: 12px;
+    margin-bottom: 8px;
+}
+.nav-link {
+    color: #495057;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.nav-link:hover, .nav-link.active {
+    background-color: #f1f3f5;
+    color: #000000;
+}
+.nav-link.active {
+    font-weight: 600;
+}
+.sub-nav {
+    padding-left: 24px;
+}
+
+/* Sidebar Profile Footer */
+.user-profile-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+}
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background-color: #ced4da;
+    border-radius: 50%;
+}
+
+/* Main Content Wrapper */
+.main-content {
+    margin-left: 260px;
+    padding: 32px;
+}
+.dashboard-card {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    min-height: 90vh;
+}
+
+/* Top Controls */
+.search-pill {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 50rem;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 320px;
+    outline: none;
+}
+.search-pill:focus {
+    border-color: #212529;
+    box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.05);
+}
+.btn-create {
+    background-color: #212529;
+    color: #ffffff;
+    border-radius: 50rem;
+    padding: 10px 24px;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+.btn-create:hover {
+    background-color: #343a40;
+    color: #ffffff;
+}
+.filter-pill {
+    background-color: #f1f3f5;
+    border: none;
+    border-radius: 50rem;
+    padding: 6px 18px;
+    font-size: 0.875rem;
+    color: #495057;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.filter-pill:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+.filter-pill.active {
+    background-color: #dee2e6;
+    color: #212529;
+    font-weight: 600;
+}
+
+/* ==========================================================================
+   CLIENT SPECIFIC STYLES
+   ========================================================================== */
 
 /* Full-width Stacked Client Card */
 .client-row-card {
@@ -117,12 +254,21 @@
     color: #1f2937;
 }
 
+/* Modal Form Customizations */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+}
+
 @media (max-width: 768px) {
+    .main-content {
+        margin-left: 0;
+        padding: 20px;
+    }
     .client-row-card {
         flex-direction: column;
         align-items: flex-start;
     }
-    
     .client-details-grid {
         grid-template-columns: 1fr;
         gap: 8px;

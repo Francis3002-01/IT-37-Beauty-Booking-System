@@ -43,7 +43,6 @@ include 'includes/sidebar.php';
             <button class="filter-pill active" onclick="setFilter('All', this)">All</button>
             <button class="filter-pill" onclick="setFilter('Hair stylist', this)">Hair Stylist</button>
             <button class="filter-pill" onclick="setFilter('Makeup Artist', this)">Makeup Artist</button>
-            <button class="filter-pill" onclick="setFilter('Nail Specialist', this)">Nail Specialist</button>
         </div>
 
         <!-- Beauticians Cards Grid -->
