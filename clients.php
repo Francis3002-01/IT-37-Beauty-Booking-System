@@ -70,7 +70,10 @@ function clientText($value)
                     <div class="client-avatar-placeholder"></div>
                     <div class="client-info-wrapper">
                         <div class="client-card-header">
-                            <h3 class="client-name"><?php echo clientText($client['firstName'] . ' ' . $client['lastName']); ?></h3>
+                            <div class="d-flex align-items-center gap-2">
+                                <h3 class="client-name"><?php echo clientText($client['firstName'] . ' ' . $client['lastName']); ?></h3>
+                                <span class="badge bg-light text-dark">#<?php echo (int) $client['clientID']; ?></span>
+                            </div>
                             <div class="client-actions">
                                 <button type="button" class="btn-card-action" onclick="editClient(<?php echo (int) $client['clientID']; ?>)">Edit</button>
                                 <form method="POST" action="backend%20logic/clients_backend.php" onsubmit="return confirmClientDelete()" class="d-inline">
