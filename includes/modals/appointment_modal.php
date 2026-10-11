@@ -3,9 +3,6 @@
  * APPOINTMENT MODAL DIALOGS
  * ------------------------------------------------------------------
  * Purpose: Holds popup modal windows for Creating, Editing, Viewing, and Deleting appointments.
- * Why include this? 
- * 1. Prevents appointments.php from getting cluttered with hundreds of lines of form HTML.
- * 2. Keeps UI dialog component logic isolated in its own subfolder (modals/).
  */
 ?>
 
@@ -14,28 +11,40 @@
     <div class="modal-dialog modal-lg modal-dialog-centered">
         <div class="modal-content p-4">
             <h3 class="fw-bold mb-4" id="modalTitle">Create New Appointment</h3>
-            <form id="appointmentForm" onsubmit="handleFormSubmit(event)">
-                <!-- Hidden ID for Editing -->
-                <input type="hidden" id="editAppointmentId" name="editAppointmentId">
+            <form id="appointmentForm" action="backend logic/appointment_backend.php" method="POST">
+                <!-- Hidden ID for Editing & Action Type -->
+                <input type="hidden" id="editAppointmentId" name="editAppointmentId" value="">
+                <input type="hidden" name="action" value="create">
 
                 <div class="row">
                     <!-- Left Column -->
                     <div class="col-md-6">
                         <div class="mb-3">
+                            <label class="field-label">Select Client</label>
+                            <select class="form-select" id="clientSelect" name="clientID" onchange="fillClientDetails()" required>
+                                <option value="" disabled selected>Select a Client...</option>
+                                <!-- Populated dynamically by JS -->
+                            </select>
+                        </div>
+                        <div class="mb-3">
                             <label class="field-label">Last Name</label>
-                            <input type="text" class="form-control" id="clientLastName" name="clientLastName" placeholder="Enter Last Name" required>
+                            <input type="text" id="clientLastName"
+       name="clientLastName"
+       class="form-control"
+       placeholder="Last Name"
+       readonly required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">First Name</label>
-                            <input type="text" class="form-control" id="clientFirstName" name="clientFirstName" placeholder="Enter First Name" required>
+                            <input type="text" class="form-control" id="clientFirstName" name="clientFirstName" placeholder="First Name" disabled required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Address</label>
-                            <input type="text" class="form-control" id="clientAddress" name="clientAddress" placeholder="Enter Address" required>
+                            <input type="text" class="form-control" id="clientAddress" name="clientAddress" placeholder="Address" disabled required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Contact No.</label>
-                            <input type="text" class="form-control" id="clientContactNo" name="clientContactNo" placeholder="Enter Contact No." required>
+                            <input type="text" class="form-control" id="clientContactNo" name="clientContactNo" placeholder="Contact No." disabled required>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Appointment Type</label>
@@ -46,7 +55,7 @@
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Appointment Notes</label>
-                            <textarea class="form-control" id="appointmentNotes" name="appointmentNotes" rows="4" placeholder="Special instructions, allergies, or directions..."></textarea>
+                            <textarea class="form-control" id="appointmentNotes" name="notes" rows="4" placeholder="Special instructions, allergies, or directions..."></textarea>
                         </div>
                     </div>
 
@@ -54,14 +63,14 @@
                     <div class="col-md-6">
                         <div class="mb-3">
                             <label class="field-label">Service</label>
-                            <select class="form-select" id="serviceSelect" name="serviceId" onchange="updateServiceCost()" required>
+                            <select class="form-select" id="serviceSelect" name="serviceID" onchange="updateServiceCost()" required>
                                 <option value="" disabled selected>Select a Service...</option>
                                 <!-- Populated dynamically by JS -->
                             </select>
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Resource (Beautician)</label>
-                            <select class="form-select" id="resourceSelect" name="resourceId" onchange="validateAvailability()" required>
+                            <select class="form-select" id="resourceSelect" name="beauticianID" onchange="validateAvailability()" required>
                                 <option value="" disabled selected>Select a Beautician...</option>
                                 <!-- Populated dynamically by JS -->
                             </select>
@@ -87,7 +96,7 @@
                         </div>
                         <div class="mb-3" id="venueWrapper" style="display: none;">
                             <label class="field-label">Venue (Required for Home Service)</label>
-                            <input type="text" class="form-control" id="venueInput" name="venueInput" placeholder="Enter home service address">
+                            <input type="text" class="form-control" id="venueInput" name="venue" placeholder="Enter home service address">
                         </div>
                         <div class="mb-3">
                             <label class="field-label">Payment Method</label>
