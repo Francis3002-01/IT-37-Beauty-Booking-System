@@ -20,14 +20,15 @@
      <option value="Makeup Artist">Makeup Artist</option>
      <option value="Nail Artist">Nail Artist</option>
      <option value="Esthetician">Esthetician</option>
+     <option value="Massage Therapist">Massage Therapist</option>
     </select></div>
-    <div class="mb-3"><label for="beauticianStatus" class="form-label field-label">Employment Status</label><select class="form-select rounded-3" id="beauticianStatus" name="employmentStatus" required>
+    <div class="mb-3"><label for="beauticianStatus" class="form-label field-label">Employment Status</label><select class="form-select rounded-3" id="beauticianStatus" name="employmentStatus" required onchange="updateSeparationRequirement()">
      <option value="Active">Active</option>
      <option value="On Leave">On Leave</option>
      <option value="Inactive">Inactive</option>
     </select></div>
     <div class="mb-3"><label for="dateJoined" class="form-label field-label">Date Joined</label><input type="date" class="form-control rounded-3" id="dateJoined" name="dateJoined" required oninput="document.getElementById('dateSeparated').setCustomValidity('')"></div>
-    <div class="mb-3"><label for="dateSeparated" class="form-label field-label">Date Separated (Optional)</label><input type="date" class="form-control rounded-3" id="dateSeparated" name="dateSeparated" oninput="this.setCustomValidity('')"></div>
+    <div class="mb-3"><label for="dateSeparated" id="dateSeparatedLabel" class="form-label field-label">Date Separated (Inactive only)</label><input type="date" class="form-control rounded-3" id="dateSeparated" name="dateSeparated" disabled oninput="this.setCustomValidity('')"></div>
     <div class="d-flex justify-content-end gap-2 mt-4"><button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button><button type="submit" class="btn btn-dark rounded-pill px-4" id="saveBeauticianBtn">Add Beautician</button></div>
    </form>
   </div>

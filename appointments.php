@@ -38,7 +38,7 @@ include 'includes/sidebar.php';
         </div>
 
         <!-- Filter Pills -->
-        <div class="d-flex gap-2 mb-4">
+        <div class="d-flex gap-2 mb-4 flex-wrap">
             <button class="filter-pill active" onclick="setFilter('All', this)">All</button>
             <button class="filter-pill" onclick="setFilter('Pending', this)">Pending</button>
             <button class="filter-pill" onclick="setFilter('Confirmed', this)">Confirmed</button>

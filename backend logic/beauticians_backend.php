@@ -69,7 +69,8 @@ $dateSeparated = getBeauticianFormValue('dateSeparated');
 
 //check specialization and employment status before saving.  god we should really array this
 if ($beauticianType != 'Hair Stylist' && $beauticianType != 'Makeup Artist'
-    && $beauticianType != 'Nail Artist' && $beauticianType != 'Esthetician') {
+    && $beauticianType != 'Nail Artist' && $beauticianType != 'Esthetician'
+    && $beauticianType != 'Massage Therapist') {
     returnToBeauticians('error', 'Select a valid specialization.');
 }
 if ($employmentStatus != 'Active' && $employmentStatus != 'On Leave' && $employmentStatus != 'Inactive') {
@@ -85,6 +86,13 @@ function validBeauticianDate($value)
 }
 if (!validBeauticianDate($dateJoined)) {
     returnToBeauticians('error', 'Enter a valid date joined.');
+}
+if ($employmentStatus == 'Inactive' && $dateSeparated == '') {
+    returnToBeauticians('error', 'Date separated is required when employment status is Inactive.');
+}
+//active and on leave beauticians have not separated, so clear the date
+if ($employmentStatus == 'Active' || $employmentStatus == 'On Leave') {
+    $dateSeparated = '';
 }
 if ($dateSeparated != '') {
     if (!validBeauticianDate($dateSeparated) || $dateSeparated < $dateJoined) {

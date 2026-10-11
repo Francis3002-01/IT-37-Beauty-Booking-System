@@ -241,12 +241,12 @@ body {
     display: flex;
     justify-content: flex-end;
     gap: 8px;
+    flex-wrap: wrap;
 }
 
 /* Responsive Design */
 @media (max-width: 768px) {
     .main-content {
-        margin-left: 0;
         padding: 20px;
     }
 }

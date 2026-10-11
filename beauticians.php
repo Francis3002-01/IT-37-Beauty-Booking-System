@@ -50,13 +50,26 @@ function beauticianText($value)
             <div id="beauticianFeedback" class="alert alert-<?php echo $status === 'success' ? 'success' : 'danger'; ?>" role="alert"><?php echo beauticianText($message); ?></div>
         <?php endif; ?>
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <input type="text" id="searchInput" class="search-pill" placeholder="Search beauticians..." oninput="filterBeauticians()">
+            <input type="text" id="searchInput" class="search-pill" placeholder="Search Beauticians..." oninput="filterBeauticians()">
             <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Beautician</button>
         </div>
-        <div class="d-flex gap-2 mb-4 flex-wrap">
-            <?php foreach (['All', 'Hair Stylist', 'Makeup Artist', 'Nail Artist', 'Esthetician'] as $type): ?>
-                <button type="button" class="filter-pill <?php if ($type == 'All') echo 'active'; ?>" onclick="setFilter(this.textContent.trim(), this)"><?php echo beauticianText($type); ?></button>
-            <?php endforeach; ?>
+        <div class="d-flex gap-3 mb-4 flex-wrap">
+            <div>
+            <select id="specializationFilter" class="form-select filter-pill filter-dropdown" aria-label="Specialization" onchange="filterBeauticians()">
+                <option value="All">Specialization</option>
+                <option value="Hair Stylist">Hair Stylist</option>
+                <option value="Makeup Artist">Makeup Artist</option>
+                <option value="Nail Artist">Nail Artist</option>
+                <option value="Esthetician">Esthetician</option>
+                <option value="Massage Therapist">Massage Therapist</option>
+            </select></div>
+            <div>
+            <select id="employmentFilter" class="form-select filter-pill filter-dropdown" aria-label="Status" onchange="filterBeauticians()">
+                <option value="All">Status</option>
+                <option value="Active">Active</option>
+                <option value="On Leave">On Leave</option>
+                <option value="Inactive">Inactive</option>
+            </select></div>
         </div>
         <div class="row" id="beauticiansGrid">
             <?php foreach ($beauticians as $beautician): ?>
@@ -72,11 +85,19 @@ function beauticianText($value)
                 >
                     <div class="beautician-card">
                         <div class="d-flex justify-content-between align-items-start mb-3">
-                            <div><h5 class="fw-bold mb-1"><?php echo beauticianText($beautician['firstName'] . ' ' . $beautician['lastName']); ?></h5></div>
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="beautician-avatar-placeholder" aria-hidden="true"></div>
+                                <div>
+                                <h5 class="fw-bold mb-0"><?php echo beauticianText($beautician['firstName'] . ' ' . $beautician['lastName']); ?></h5>
+                                <div class="beautician-specialization text-muted"><?php echo beauticianText($beautician['beauticianType']); ?></div>
+                                </div>
+                            </div>
                             <span class="badge bg-light text-dark">#<?php echo (int) $beautician['beauticianID']; ?></span>
                         </div>
                         <div class="d-flex justify-content-between align-items-center gap-2 mb-3">
-                            <div><div class="field-label">Specialization</div><div class="field-value"><?php echo beauticianText($beautician['beauticianType']); ?></div></div>
+                            <div>
+                                <div class="field-label">Contact Number</div><div class="field-value"><?php echo beauticianText($beautician['contactNo']); ?></div>
+                            </div>
                             <?php
                             $statusClass = 'status-inactive';
                             if ($beautician['employmentStatus'] == 'Active') {
@@ -86,9 +107,6 @@ function beauticianText($value)
                             }
                             ?>
                             <span class="beautician-employment-status <?php echo $statusClass; ?>"><?php echo beauticianText($beautician['employmentStatus']); ?></span>
-                        </div>
-                        <div class="mb-3">
-                            <div class="field-label">Contact Number</div><div class="field-value"><?php echo beauticianText($beautician['contactNo']); ?></div>
                         </div>
                         <div class="border-top pt-3 d-flex justify-content-end gap-2 flex-wrap">
                             <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewBeautician(<?php echo (int) $beautician['beauticianID']; ?>)">VIEW</button>

@@ -11,6 +11,7 @@ function clearBeauticianValidation()
 function validateBeauticianForm()
 {
     clearBeauticianValidation();
+    updateSeparationRequirement();
     const names = ['beauticianFirstName', 'beauticianLastName'];
     for (let index = 0; index < names.length; index++) {
         const field = document.getElementById(names[index]);
@@ -46,35 +47,41 @@ function hideBeauticianFeedback()
 setTimeout(hideBeauticianFeedback, 3000); //set the timeout to 3 seconds after notifying outcomes
 
 //search and specialization filters work on the PHP-rendered cards
-let currentFilter = 'All';
-function setFilter(type, button)
-{
-    const buttons = document.getElementsByClassName('filter-pill');
-    for (let index = 0; index < buttons.length; index++) buttons[index].classList.remove('active');
-    button.classList.add('active');
-    currentFilter = type;
-    filterBeauticians();
-}
 function filterBeauticians()
 {
     const query = document.getElementById('searchInput').value.trim().toLowerCase();
+    const employment = document.getElementById('employmentFilter').value;
+    const specialization = document.getElementById('specializationFilter').value;
     const records = document.getElementsByClassName('beautician-record');
     let visibleCount = 0;
     for (let index = 0; index < records.length; index++) {
         const record = records[index];
         const type = record.getAttribute('data-type');
         const text = (record.getAttribute('data-first-name') + ' ' + record.getAttribute('data-last-name') + ' ' + type + ' ' + record.getAttribute('data-status') + ' ' + record.getAttribute('data-address') + ' ' + record.getAttribute('data-contact')).toLowerCase();
-        if ((currentFilter === 'All' || type === currentFilter) && text.includes(query)) {
+        if ((specialization === 'All' || type === specialization) && (employment === 'All' || record.getAttribute('data-status') === employment) && text.includes(query)) {
             record.style.display = ''; visibleCount++;
         } else record.style.display = 'none';
     }
     document.getElementById('noBeauticiansMessage').hidden = visibleCount > 0;
 }
 //reset the form for addition; ordinary form submission handles saving
+function updateSeparationRequirement()
+{
+    const inactive = document.getElementById('beauticianStatus').value === 'Inactive';
+    const separated = document.getElementById('dateSeparated');
+    separated.required = inactive;
+    separated.disabled = !inactive;
+    if (!inactive) separated.value = '';
+    separated.setCustomValidity('');
+    document.getElementById('dateSeparatedLabel').textContent = inactive
+        ? 'Date Separated (Required)' : 'Date Separated (Inactive only)';
+}
+
 function openCreateModal()
 {
     document.getElementById('beauticianForm').reset();
     clearBeauticianValidation();
+    updateSeparationRequirement();
     document.getElementById('editBeauticianId').value = '';
     document.getElementById('beauticianAction').value = 'create';
     document.getElementById('beauticianModalTitle').textContent = 'Add New Beautician';
@@ -98,6 +105,7 @@ function editBeautician(id)
     document.getElementById('beauticianStatus').value = record.getAttribute('data-status');
     document.getElementById('dateJoined').value = record.getAttribute('data-joined');
     document.getElementById('dateSeparated').value = record.getAttribute('data-separated');
+    updateSeparationRequirement();
     document.getElementById('beauticianModalTitle').textContent = 'Edit Beautician';
     document.getElementById('saveBeauticianBtn').textContent = 'Save Changes';
     bootstrap.Modal.getOrCreateInstance(document.getElementById('beauticianModal')).show();
