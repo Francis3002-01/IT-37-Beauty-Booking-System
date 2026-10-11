@@ -162,3 +162,37 @@ body {
     color: #ffffff;
     border-color: #dc3545;
 }
+
+/* Password Visibility Toggle */
+.password-wrapper {
+    position: relative;
+}
+
+.password-wrapper input {
+    padding-right: 45px;
+}
+
+.toggle-password {
+    position: absolute;
+    top: 50%;
+    right: 12px;
+    transform: translateY(-50%);
+    z-index: 5;
+    border: none;
+    background: transparent;
+    color: #6c757d;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 18px;
+    line-height: 1;
+}
+
+.toggle-password:hover {
+    color: #212529;
+}
+
+.toggle-password:focus-visible {
+    outline: 2px solid #212529;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
