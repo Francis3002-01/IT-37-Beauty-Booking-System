@@ -1,22 +1,11 @@
 <?php
-/**
- * ==============================================================================
- * DATABASE CONNECTION CONFIGURATION 
- * ==============================================================================
- */
+// database connection config. i changed it from pdo to mysqli because i was having issues with pdo and i wanted to use mysqli instead sorrrrrryyyyyyyyyyyy piro sadyang dele rajod nako sha madefend ni maam LOL
 $host     = 'localhost';
-$dbname   = ''; // CHANGE THIS to the datbase name
+$dbname   = 'beautyreserve'; // CHANGE THIS to the datbase name thanks john francis
 $username = 'root';  // Default XAMPP username
 $password = '';      // Default XAMPP password (leave empty)
 
-try {
-    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8mb4", $username, $password);
-    
-    // Enable error reporting and set default fetch mode to associative arrays
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC); 
-} 
-
-catch (PDOException $e) {
-    die("Database Connection Error: " . $e->getMessage());
-}
+// Report database failures as exceptions so callers can handle them.
+mysqli_report(MYSQLI_REPORT_ERROR | MYSQLI_REPORT_STRICT);
+$conn = new mysqli($host, $username, $password, $dbname);
+$conn->set_charset('utf8mb4');
