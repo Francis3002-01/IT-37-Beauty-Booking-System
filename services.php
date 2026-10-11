@@ -3,7 +3,7 @@
  * ------------------------------------------------------------------
  * Main tab for managing salon services.
  * Acts as the visual shell. It relies on PHP includes for layout components (Header, Sidebar, Modals, Footer) and JavaScript for dynamic content rendering.
-  */
+*/
 
 
 $pageTitle = "Services - beautyReserve";
