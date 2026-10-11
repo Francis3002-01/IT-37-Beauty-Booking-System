@@ -84,7 +84,10 @@ function serviceText($value)
                      data-description="<?php echo serviceText($service['description']); ?>">
                     <div class="service-card">
                         <div class="service-image-placeholder"></div>
-                        <h4 class="service-title"><?php echo serviceText($service['serviceName']); ?></h4>
+                        <div class="d-flex justify-content-between align-items-start gap-2">
+                            <h4 class="service-title"><?php echo serviceText($service['serviceName']); ?></h4>
+                            <span class="badge bg-light text-dark">#<?php echo (int) $service['serviceID']; ?></span>
+                        </div>
                         <div class="d-flex justify-content-between service-meta">
                             <span><?php echo serviceText($service['category']); ?></span>
                             <span><?php echo (int) $service['duration']; ?> min.</span>
