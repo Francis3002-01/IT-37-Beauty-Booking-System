@@ -2,7 +2,7 @@
 /* BACKEND LOGIC FOR STAFF.PHP
  * ------------------------------------------------------------------
  * Add and edit are functional.
- * Deletion possible only for staff not yet in any appointments 
+ * Deletion possible only for staff without a linked user account.
  * [table] staff: staffID, staffType, lastName, firstName,
  * address, contactNo, employmentStatus, dateJoined, dateSeparated.
  */
@@ -52,11 +52,11 @@ if ($action == 'edit' || $action == 'delete') {
     }
 }
 
-//check if staff is already in an appointment
+//staff links to appointments through user accounts, so check the account first
 if ($action == 'delete') {
     try {
         require_once __DIR__ . '/../config/database.php';
-        $statement = $conn->prepare('SELECT appointmentID FROM apt_staff WHERE staffID = ? LIMIT 1');
+        $statement = $conn->prepare('SELECT userID FROM `user` WHERE staffID = ? LIMIT 1');
         $statement->bind_param('i', $staffID);
         $statement->execute();
         $statement->store_result();
