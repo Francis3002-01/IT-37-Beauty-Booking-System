@@ -123,6 +123,6 @@ function editClient(id)
 }
 function confirmClientDelete()
 {
-    return confirm('Request deletion of this client? Clients used in appointments cannot be deleted.');
+    return confirm('Delete this client? Clients used in appointments cannot be deleted.');
 }
 filterClients();

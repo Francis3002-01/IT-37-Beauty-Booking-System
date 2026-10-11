@@ -127,6 +127,6 @@ function viewStaff(id)
 }
 function confirmStaffDelete()
 {
-    return confirm('Request deletion of this staff? Records used in appointments cannot be deleted.');
+    return confirm('Delete this staff member? Records used in appointments cannot be deleted.');
 }
 filterStaff();

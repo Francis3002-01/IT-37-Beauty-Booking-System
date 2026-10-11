@@ -2,7 +2,7 @@
 /* BACKEND LOGIC FOR BEAUTICIANS.PHP
  * ------------------------------------------------------------------
  * Add and edit are functional.
- * Deletion needs the appointment relationship before usage can be checked.
+ * Deletion possible only for beauticians not yet in any appointments
  * [table] beauticians: beauticianID, beauticianType, lastName, firstName,
  * address, contactNo, employmentStatus, dateJoined, dateSeparated.
  */
@@ -52,9 +52,47 @@ if ($action == 'edit' || $action == 'delete') {
     }
 }
 
-//implement deletion logic soon okay
+//check if beautician is in an appointment
 if ($action == 'delete') {
-    returnToBeauticians('error', 'Deletion is unavailable until appointment usage checks are configured.');
+    try {
+        require_once __DIR__ . '/../config/database.php';
+        $statement = $conn->prepare('SELECT appointmentID FROM apt_beautician WHERE beauticianID = ? LIMIT 1');
+        $statement->bind_param('i', $beauticianID);
+        $statement->execute();
+        $statement->store_result();
+        $used = $statement->num_rows > 0;
+        $statement->close();
+        if ($used) {
+            $conn->close();
+            returnToBeauticians('error', 'This beautician cannot be deleted because they are used in an appointment.');
+        }
+        $statement = $conn->prepare('SELECT availabilityID FROM availability WHERE beauticianID = ? LIMIT 1');
+        $statement->bind_param('i', $beauticianID);
+        $statement->execute();
+        $statement->store_result();
+        $used = $statement->num_rows > 0;
+        $statement->close();
+        if ($used) {
+            $conn->close();
+            returnToBeauticians('error', 'This beautician cannot be deleted because they have availability schedules. Remove unused schedules first.');
+        }
+        $statement = $conn->prepare('DELETE FROM `beauticians` WHERE beauticianID = ?');
+        $statement->bind_param('i', $beauticianID);
+        $statement->execute();
+        $deleted = $statement->affected_rows;
+        $statement->close();
+        $conn->close();
+        if ($deleted == 0) {
+            returnToBeauticians('error', 'The selected record no longer exists.');
+        }
+        returnToBeauticians('success', 'Beautician deleted successfully.');
+    } catch (mysqli_sql_exception $error) {
+        if ($error->getCode() == 1451) {
+            returnToBeauticians('error', 'This record cannot be deleted because it is referenced by another record.');
+        }
+        error_log('Beautician deletion failed: ' . $error->getMessage());
+        returnToBeauticians('error', 'Unable to delete the record. Please try again.');
+    }
 }
 
 //store form values in variables for validation to prep for insertion, edits, and deletion.
@@ -192,4 +230,4 @@ try {
 } catch (mysqli_sql_exception $error) { //js in case bai
     error_log('Beautician save failed: ' . $error->getMessage());
     returnToBeauticians('error', 'Unable to save the beautician. Please try again.');
-} //gotta add deletion logic soon okay
+}

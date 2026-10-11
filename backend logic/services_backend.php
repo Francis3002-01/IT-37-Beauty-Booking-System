@@ -2,8 +2,7 @@
 /* BACKEND LOGIC FOR SERVICES.PHP
  * ------------------------------------------------------------------
  * Add and edit are functional. 
- * Deletion is not implemented kay need pa iconnect sa appointment LOL.
- * Deletion isn't allowed for services nga gigamit na btw.
+ * Deletion possible only for services not yet in any appointments
  * [table] service fields: serviceID(pk, constraint 1xxx but like should we contain it in 1k-2k what r ur thoughts), serviceName, serviceCategory, duration, price, description.
  */
 
@@ -54,9 +53,37 @@ if ($action == 'edit' || $action == 'delete') {
     }
 }
 
-//implement deletion logic soon okay
+//check if service is already in an appointment
 if ($action == 'delete') {
-    returnToServices('error', 'Deletion is unavailable hahah lets do it.');
+    try {
+        require_once __DIR__ . '/../config/database.php';
+        $statement = $conn->prepare('SELECT appointmentID FROM appointment WHERE serviceID = ? LIMIT 1');
+        $statement->bind_param('i', $serviceID);
+        $statement->execute();
+        $statement->store_result();
+        $used = $statement->num_rows > 0;
+        $statement->close();
+        if ($used) {
+            $conn->close();
+            returnToServices('error', 'This service cannot be deleted because it is used in an appointment.');
+        }
+        $statement = $conn->prepare('DELETE FROM `service` WHERE serviceID = ?');
+        $statement->bind_param('i', $serviceID);
+        $statement->execute();
+        $deleted = $statement->affected_rows;
+        $statement->close();
+        $conn->close();
+        if ($deleted == 0) {
+            returnToServices('error', 'The selected record no longer exists.');
+        }
+        returnToServices('success', 'Service deleted successfully.');
+    } catch (mysqli_sql_exception $error) {
+        if ($error->getCode() == 1451) {
+            returnToServices('error', 'This record cannot be deleted because it is referenced by another record.');
+        }
+        error_log('Service deletion failed: ' . $error->getMessage());
+        returnToServices('error', 'Unable to delete the record. Please try again.');
+    }
 }
 
 //store form values in variables for validation to prep for insertion, edits, and deletion.
@@ -141,4 +168,4 @@ try {
 } catch (mysqli_sql_exception $error) { //js in case bai
     error_log('Service save failed: ' . $error->getMessage());
     returnToServices('error', 'Unable to save the service. Please try again.');
-} //gotta add deletion logic soon okay
+}

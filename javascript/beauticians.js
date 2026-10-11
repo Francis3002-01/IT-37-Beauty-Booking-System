@@ -128,6 +128,6 @@ function viewBeautician(id)
 }
 function confirmBeauticianDelete()
 {
-    return confirm('Request deletion of this beautician? Records used in appointments cannot be deleted.');
+    return confirm('Delete this beautician? Records used in appointments cannot be deleted.');
 }
 filterBeauticians();

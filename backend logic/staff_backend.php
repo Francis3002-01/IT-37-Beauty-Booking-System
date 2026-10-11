@@ -2,7 +2,7 @@
 /* BACKEND LOGIC FOR STAFF.PHP
  * ------------------------------------------------------------------
  * Add and edit are functional.
- * Deletion needs the appointment relationship before usage can be checked.
+ * Deletion possible only for staff not yet in any appointments 
  * [table] staff: staffID, staffType, lastName, firstName,
  * address, contactNo, employmentStatus, dateJoined, dateSeparated.
  */
@@ -52,9 +52,37 @@ if ($action == 'edit' || $action == 'delete') {
     }
 }
 
-//implement deletion logic soon okay
+//check if staff is already in an appointment
 if ($action == 'delete') {
-    returnToStaff('error', 'Deletion is unavailable until appointment usage checks are configured.');
+    try {
+        require_once __DIR__ . '/../config/database.php';
+        $statement = $conn->prepare('SELECT appointmentID FROM apt_staff WHERE staffID = ? LIMIT 1');
+        $statement->bind_param('i', $staffID);
+        $statement->execute();
+        $statement->store_result();
+        $used = $statement->num_rows > 0;
+        $statement->close();
+        if ($used) {
+            $conn->close();
+            returnToStaff('error', 'This staff member cannot be deleted because they have a user account. Set them to Inactive and disable the account instead.');
+        }
+        $statement = $conn->prepare('DELETE FROM `staff` WHERE staffID = ?');
+        $statement->bind_param('i', $staffID);
+        $statement->execute();
+        $deleted = $statement->affected_rows;
+        $statement->close();
+        $conn->close();
+        if ($deleted == 0) {
+            returnToStaff('error', 'The selected record no longer exists.');
+        }
+        returnToStaff('success', 'Staff member deleted successfully.');
+    } catch (mysqli_sql_exception $error) {
+        if ($error->getCode() == 1451) {
+            returnToStaff('error', 'This record cannot be deleted because it is referenced by another record.');
+        }
+        error_log('Staff member deletion failed: ' . $error->getMessage());
+        returnToStaff('error', 'Unable to delete the record. Please try again.');
+    }
 }
 
 //store form values in variables for validation to prep for insertion, edits, and deletion.
@@ -190,4 +218,4 @@ try {
 } catch (mysqli_sql_exception $error) { //js in case bai
     error_log('Staff save failed: ' . $error->getMessage());
     returnToStaff('error', 'Unable to save the staff. Please try again.');
-} //gotta add deletion logic soon okay
+}

@@ -2,9 +2,8 @@
 /* BACKEND LOGIC FOR CLIENTS.PHP
  * ------------------------------------------------------------------
  * Add and edit are functional. 
- * Deletion is not implemented kay need pa iconnect sa appointment LOL.
- * Deletion isn't allowed for services nga gigamit na btw.
- * [table] client fields: clientID(pk, constraint 2xxx but like should we contain it in 1k-2k what r ur thoughts), lastName, firstName, address, contactNo.
+ * Deletion possible only for clients not yet in any appointments
+ * [table] client fields: clientID(pk), lastName, firstName, address, contactNo.
  */
 
 //function to handle outcomes (errors and success messages) and return to clients.php
@@ -52,9 +51,37 @@ if ($action == 'edit' || $action == 'delete') {
     }
 }
 
-//implement deletion logic soon okay
+//check if client is already in an appointment
 if ($action == 'delete') {
-    returnToClients('error', 'Deletion is unavailable hahah lets do it.');
+    try {
+        require_once __DIR__ . '/../config/database.php';
+        $statement = $conn->prepare('SELECT appointmentID FROM apt_client WHERE clientID = ? LIMIT 1');
+        $statement->bind_param('i', $clientID);
+        $statement->execute();
+        $statement->store_result();
+        $used = $statement->num_rows > 0;
+        $statement->close();
+        if ($used) {
+            $conn->close();
+            returnToClients('error', 'This client cannot be deleted because they are used in an appointment.');
+        }
+        $statement = $conn->prepare('DELETE FROM `client` WHERE clientID = ?');
+        $statement->bind_param('i', $clientID);
+        $statement->execute();
+        $deleted = $statement->affected_rows;
+        $statement->close();
+        $conn->close();
+        if ($deleted == 0) {
+            returnToClients('error', 'The selected record no longer exists.');
+        }
+        returnToClients('success', 'Client deleted successfully.');
+    } catch (mysqli_sql_exception $error) {
+        if ($error->getCode() == 1451) {
+            returnToClients('error', 'This record cannot be deleted because it is referenced by another record.');
+        }
+        error_log('Client deletion failed: ' . $error->getMessage());
+        returnToClients('error', 'Unable to delete the record. Please try again.');
+    }
 }
 
 //store form values in variables for validation to prep for insertion, edits, and deletion.
@@ -152,4 +179,4 @@ try {
 } catch (mysqli_sql_exception $error) { //js in case bai
     error_log('Client save failed: ' . $error->getMessage());
     returnToClients('error', 'Unable to save the client. Please try again.');
-} //gotta add deletion logic soon okay
+}

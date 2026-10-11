@@ -89,5 +89,5 @@ function viewService(id)
 
 function confirmServiceDelete()
 {
-    return confirm('Request deletion of this service? Used services cannot be deleted.');
+    return confirm('Delete this service? Used services cannot be deleted.');
 }
