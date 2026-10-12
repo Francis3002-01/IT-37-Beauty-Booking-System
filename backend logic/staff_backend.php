@@ -14,13 +14,14 @@ if (!in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', 'staff'], true
  */
 
 //function to handle outcomes (errors and success messages) and return to staff.php
-function returnToStaff($status,$message)
+function returnToStaff($status,$message,$duration = 3000)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
     $_SESSION['staff_status'] =$status;
     $_SESSION['staff_message'] =$message;
+    $_SESSION['staff_message_duration'] = $duration;
     header('Location: ../staff.php', true, 303);
     exit;
 }
@@ -276,7 +277,7 @@ try {
         $conn->commit();$conn->close();
 
         // Success message displaying the generated readable password
-        returnToStaff('success', "Staff added successfully! Username: '{$username}' Password: {$rawPassword}");
+        returnToStaff('success', "Staff account created successfully! Username: '{$username}' Generated password: {$rawPassword}", 10000);
 
     } else if ($action == 'edit') { // Update existing staff and user account in database
         $statement =$conn->prepare('SELECT staffID FROM staff WHERE staffID = ?');
