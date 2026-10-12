@@ -1,4 +1,10 @@
 <?php
+if (session_status() !== PHP_SESSION_ACTIVE) session_start();
+if (!in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', 'staff'], true)) {
+    http_response_code(403);
+    exit('You must be logged in as Admin or Staff to manage staff records.');
+}
+
 /* BACKEND LOGIC FOR STAFF.PHP
  * ------------------------------------------------------------------
  * Add and edit are functional.
