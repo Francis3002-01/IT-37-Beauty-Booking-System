@@ -12,7 +12,7 @@ $pageTitle = "Services - beautyReserve";
 require_once __DIR__ . '/config/database.php';
 
 $result = $conn->query(
-    'SELECT *, serviceCategory AS category
+    'SELECT serviceID, serviceName, serviceCategory AS category, duration, price, description, (imageData IS NOT NULL) AS hasImage
      FROM service
      ORDER BY serviceID'
 );
@@ -75,9 +75,8 @@ function serviceText($value)
         <div class="row" id="servicesGrid">
             <?php foreach ($dbServices as $service): ?>
                 <?php
-                $serviceImage = $service['serviceImage'] ?? '';
-                if (!preg_match('/^uploads\/services\/[a-f0-9]{32}\.(jpg|png|webp)$/', $serviceImage)
-                    || !is_file(__DIR__ . '/' . $serviceImage)) $serviceImage = '';
+                $serviceImage = $service['hasImage']
+                    ? 'service-image.php?id=' . (int) $service['serviceID'] : '';
                 ?>
                 <div class="col-md-6 col-lg-6 mb-4 service-record"
                      id="service-<?php echo (int) $service['serviceID']; ?>"
