@@ -90,7 +90,7 @@ function serviceText($value)
                     <div class="service-card">
                         <div class="service-image-placeholder">
                             <?php if ($serviceImage != ''): ?>
-                                <img src="<?php echo serviceText($serviceImage); ?>" alt="<?php echo serviceText($service['serviceName']); ?>">
+                                <img src="<?php echo serviceText($serviceImage); ?>" class="w-100 object-fit-cover" height="180" alt="<?php echo serviceText($service['serviceName']); ?>">
                             <?php endif; ?>
                         </div>
                         <div class="d-flex justify-content-between align-items-start gap-2">

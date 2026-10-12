@@ -86,7 +86,7 @@ function staffText($value)
                             <div class="d-flex align-items-center gap-3">
                                 <div class="staff-avatar-placeholder">
                         <?php if ($profileImage != ''): ?>
-                            <img src="<?php echo staffText($profileImage); ?>" class="staff-profile-image" alt="<?php echo staffText($staff['firstName'] . ' ' . $staff['lastName']); ?> profile picture">
+                            <img src="<?php echo staffText($profileImage); ?>" class="staff-profile-image rounded-circle object-fit-cover" width="60" height="60" alt="<?php echo staffText($staff['firstName'] . ' ' . $staff['lastName']); ?> profile picture">
                         <?php endif; ?>
                     </div>
                                 <div>
