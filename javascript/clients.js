@@ -126,3 +126,20 @@ function confirmClientDelete()
     return confirm('Delete this client? Clients used in appointments cannot be deleted.');
 }
 filterClients();
+
+function viewClient(id)
+{
+    const record = document.getElementById('client-' + id);
+    if (!record) return;
+    const photo = document.getElementById('viewClientImage');
+    const imagePath = record.getAttribute('data-image');
+    photo.hidden = !imagePath;
+    if (imagePath) photo.src = imagePath;
+    else photo.removeAttribute('src');
+    document.getElementById('viewClientId').textContent = id;
+    document.getElementById('viewClientFirstName').textContent = record.getAttribute('data-first-name');
+    document.getElementById('viewClientLastName').textContent = record.getAttribute('data-last-name');
+    document.getElementById('viewClientAddress').textContent = record.getAttribute('data-address');
+    document.getElementById('viewClientContactNo').textContent = record.getAttribute('data-contact');
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('viewClientModal')).show();
+}

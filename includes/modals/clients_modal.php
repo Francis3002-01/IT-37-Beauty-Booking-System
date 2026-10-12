@@ -7,7 +7,10 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="clientForm" method="POST" action="backend%20logic/clients_backend.php" onsubmit="return validateClientForm()">
+                <form id="clientForm" method="POST" enctype="multipart/form-data" action="backend%20logic/clients_backend.php" onsubmit="return validateClientForm()">
+    <div class="mb-3"><label for="clientImage" class="form-label field-label">Profile Picture (Optional)</label>
+     <input type="file" class="form-control" id="clientImage" name="profileImage" accept="image/jpeg,image/png,image/webp" aria-describedby="clientImageHelp">
+     <div id="clientImageHelp" class="form-text">JPG, PNG or WebP, up to 2 MB.</div></div>
                     <input type="hidden" id="editClientId" name="clientID">
                     <input type="hidden" id="clientAction" name="action" value="create">
                     <div class="mb-3">
@@ -35,4 +38,23 @@
             </div>
         </div>
     </div>
+</div>
+
+<!-- View client details -->
+<div class="modal fade" id="viewClientModal" tabindex="-1" aria-labelledby="viewClientTitle" aria-hidden="true">
+ <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content p-3">
+  <div class="modal-header"><h5 class="modal-title" id="viewClientTitle">Client Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
+  <div class="modal-body"><div class="row g-4">
+   <div class="col-md-4"><div class="client-view-photo"><img id="viewClientImage" class="client-profile-image" alt="Client profile picture" hidden></div></div>
+   <div class="col-md-4">
+    <p><strong>ID:</strong> <span id="viewClientId"></span></p>
+    <p><strong>First Name:</strong> <span id="viewClientFirstName"></span></p>
+    <p><strong>Last Name:</strong> <span id="viewClientLastName"></span></p>
+   </div>
+   <div class="col-md-4">
+    <p><strong>Address:</strong> <span id="viewClientAddress"></span></p>
+    <p><strong>Contact Number:</strong> <span id="viewClientContactNo"></span></p>
+   </div>
+  </div></div>
+ </div></div>
 </div>

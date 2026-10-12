@@ -30,6 +30,54 @@ function getClientFormValue($fieldName)
     return trim($_POST[$fieldName]);
 }
 
+//check the actual image contents, then save a unique filename instead of the original name
+function uploadClientImage()
+{
+    if (!isset($_FILES['profileImage'])) return null;
+    $file = $_FILES['profileImage'];
+    if (!isset($file['error']) || !is_int($file['error'])) {
+        throw new RuntimeException('Invalid profile picture upload.');
+    }
+    if ($file['error'] == UPLOAD_ERR_NO_FILE) return null;
+    if ($file['error'] != UPLOAD_ERR_OK) {
+        throw new RuntimeException('Profile picture upload failed. Choose an image up to 2 MB.');
+    }
+    if (!isset($file['tmp_name']) || !is_string($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        throw new RuntimeException('Invalid profile picture upload.');
+    }
+    if (filesize($file['tmp_name']) > 2 * 1024 * 1024) {
+        throw new RuntimeException('Profile picture must be no larger than 2 MB.');
+    }
+    $image = @getimagesize($file['tmp_name']);
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
+    if (!$image || $image['mime'] != $mime) {
+        throw new RuntimeException('Choose a valid JPG, PNG or WebP image.');
+    }
+    if ($mime == 'image/jpeg') $extension = 'jpg';
+    else if ($mime == 'image/png') $extension = 'png';
+    else if ($mime == 'image/webp') $extension = 'webp';
+    else throw new RuntimeException('Choose a JPG, PNG or WebP image.');
+
+    $folder = __DIR__ . '/../uploads/clients';
+    if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
+        throw new RuntimeException('Unable to create the profile picture folder.');
+    }
+    $path = 'uploads/clients/' . bin2hex(random_bytes(16)) . '.' . $extension;
+    if (!move_uploaded_file($file['tmp_name'], __DIR__ . '/../' . $path)) {
+        throw new RuntimeException('Unable to save the profile picture.');
+    }
+    return $path;
+}
+
+//only remove files created by this upload handler
+function removeClientImage($path)
+{
+    if (is_string($path) && preg_match('/^uploads\/clients\/[a-f0-9]{32}\.(jpg|png|webp)$/', $path)) {
+        $file = __DIR__ . '/../' . $path;
+        if (is_file($file) && !unlink($file)) error_log('Unable to remove client image: ' . $path);
+    }
+}
+
 //ensure request method is POST, else return to clients.php with error message
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     returnToClients('error', 'Please submit the client form.');
@@ -65,6 +113,11 @@ if ($action == 'delete') {
             $conn->close();
             returnToClients('error', 'This client cannot be deleted because they are used in an appointment.');
         }
+        $statement = $conn->prepare('SELECT * FROM `client` WHERE clientID = ?');
+        $statement->bind_param('i', $clientID);
+        $statement->execute();
+        $record = $statement->get_result()->fetch_assoc();
+        $statement->close();
         $statement = $conn->prepare('DELETE FROM `client` WHERE clientID = ?');
         $statement->bind_param('i', $clientID);
         $statement->execute();
@@ -74,6 +127,7 @@ if ($action == 'delete') {
         if ($deleted == 0) {
             returnToClients('error', 'The selected record no longer exists.');
         }
+        removeClientImage($record['profileImage'] ?? null);
         returnToClients('success', 'Client deleted successfully.');
     } catch (mysqli_sql_exception $error) {
         if ($error->getCode() == 1451) {
@@ -122,6 +176,7 @@ if (!ctype_digit($contactNo) || strlen($contactNo) != 11) {
     returnToClients('error', 'Contact number must contain exactly 11 digits.');
 }
 
+$profileImage = null;
 try {
     require_once __DIR__ . '/../config/database.php';
 
@@ -150,33 +205,40 @@ try {
     }
 
     if ($action == 'create') { //insert new client into database
-        $sql = 'INSERT INTO client (lastName, firstName, address, contactNo) VALUES (?, ?, ?, ?)';
+        $sql = 'INSERT INTO client (lastName, firstName, address, contactNo, profileImage) VALUES (?, ?, ?, ?, ?)';
         $statement = $conn->prepare($sql);
-        $statement->bind_param('ssss', $lastName, $firstName, $address, $contactNo);
+        $profileImage = uploadClientImage();
+        $statement->bind_param('sssss', $lastName, $firstName, $address, $contactNo, $profileImage);
         $statement->execute();
         $statement->close();
         $conn->close();
         returnToClients('success', 'Client added successfully.');
     } else if ($action == 'edit') { //update existing client in database
-        $statement = $conn->prepare('SELECT clientID FROM client WHERE clientID = ?');
+        $statement = $conn->prepare('SELECT clientID, profileImage FROM client WHERE clientID = ?');
         $statement->bind_param('i', $clientID);
         $statement->execute();
-        $statement->store_result();
-        $clientExists = $statement->num_rows > 0;
+        $record = $statement->get_result()->fetch_assoc();
+        $clientExists = $record !== null;
         $statement->close();
         if (!$clientExists) {
             $conn->close();
             returnToClients('error', 'The selected client no longer exists.');
         }
-        $sql = 'UPDATE client SET lastName = ?, firstName = ?, address = ?, contactNo = ? WHERE clientID = ?';
+        $sql = 'UPDATE client SET lastName = ?, firstName = ?, address = ?, contactNo = ?, profileImage = COALESCE(?, profileImage) WHERE clientID = ?';
         $statement = $conn->prepare($sql);
-        $statement->bind_param('ssssi', $lastName, $firstName, $address, $contactNo, $clientID);
+        $profileImage = uploadClientImage();
+        $statement->bind_param('sssssi', $lastName, $firstName, $address, $contactNo, $profileImage, $clientID);
         $statement->execute();
         $statement->close();
         $conn->close();
+        if ($profileImage !== null) removeClientImage($record['profileImage']);
         returnToClients('success', 'Client updated successfully.');
     }
 } catch (mysqli_sql_exception $error) { //js in case bai
+    removeClientImage($profileImage);
     error_log('Client save failed: ' . $error->getMessage());
     returnToClients('error', 'Unable to save the client. Please try again.');
+} catch (RuntimeException $error) {
+    removeClientImage($profileImage);
+    returnToClients('error', $error->getMessage());
 }

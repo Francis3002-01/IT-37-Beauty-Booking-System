@@ -78,6 +78,11 @@ function viewService(id)
 {
     const record = document.getElementById('service-' + id);
     if (!record) return;
+    const photo = document.getElementById('viewServiceImage');
+    const imagePath = record.getAttribute('data-image');
+    photo.hidden = !imagePath;
+    if (imagePath) photo.src = imagePath;
+    else photo.removeAttribute('src');
     document.getElementById('viewServiceId').textContent = id;
     document.getElementById('viewServiceName').textContent = record.getAttribute('data-name');
     document.getElementById('viewServiceCategory').textContent = record.getAttribute('data-category');

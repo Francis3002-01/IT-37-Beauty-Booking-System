@@ -7,7 +7,12 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <form id="serviceForm" method="POST" action="backend%20logic/services_backend.php">
+                <form id="serviceForm" method="POST" enctype="multipart/form-data" action="backend%20logic/services_backend.php">
+                    <div class="mb-3">
+                        <label for="serviceImage" class="form-label field-label">Service Image (Optional)</label>
+                        <input type="file" class="form-control" id="serviceImage" name="serviceImage" accept="image/jpeg,image/png,image/webp" aria-describedby="serviceImageHelp">
+                        <div id="serviceImageHelp" class="form-text">JPG, PNG or WebP, up to 2 MB.</div>
+                    </div>
                     <input type="hidden" id="editServiceId" name="serviceID">
                     <input type="hidden" id="serviceAction" name="action" value="create">
                     
@@ -61,6 +66,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="viewModalBody">
+                <div class="service-image-placeholder"><img id="viewServiceImage" alt="Service image" hidden></div>
                 <p><strong>ID:</strong> <span id="viewServiceId"></span></p>
                 <p><strong>Service Name:</strong> <span id="viewServiceName"></span></p>
                 <p><strong>Category:</strong> <span id="viewServiceCategory"></span></p>

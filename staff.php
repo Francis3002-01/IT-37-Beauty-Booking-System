@@ -18,7 +18,7 @@ $status = $_SESSION['staff_status'] ?? 'error';
 unset($_SESSION['staff_message'], $_SESSION['staff_status']);
 
 //retrieve staff records from database
-$result = $conn->query('SELECT staffID, staffType, lastName, firstName, address, contactNo, employmentStatus, dateJoined, dateSeparated FROM staff ORDER BY staffID');
+$result = $conn->query('SELECT * FROM staff ORDER BY staffID');
 $staffRecords = [];
 while ($staff = $result->fetch_assoc()) {
     $staffRecords[] = $staff;
@@ -35,6 +35,7 @@ function staffText($value)
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo staffText($pageTitle); ?></title>
@@ -64,11 +65,17 @@ function staffText($value)
         </div>
         <div class="row" id="staffGrid">
             <?php foreach ($staffRecords as $staff): ?>
+                <?php
+                $profileImage = $staff['profileImage'] ?? '';
+                if (!preg_match('/^uploads\/staff\/[a-f0-9]{32}\.(jpg|png|webp)$/', $profileImage)
+                    || !is_file(__DIR__ . '/' . $profileImage)) $profileImage = '';
+                ?>
                 <div class="col-md-6 col-lg-4 mb-4 staff-record" id="staff-<?php echo (int) $staff['staffID']; ?>"
                      data-first-name="<?php echo staffText($staff['firstName']); ?>"
                      data-last-name="<?php echo staffText($staff['lastName']); ?>"
                      data-type="<?php echo staffText($staff['staffType']); ?>"
                      data-address="<?php echo staffText($staff['address']); ?>"
+                     data-image="<?php echo staffText($profileImage); ?>"
                      data-contact="<?php echo staffText($staff['contactNo']); ?>"
                      data-status="<?php echo staffText($staff['employmentStatus']); ?>"
                      data-joined="<?php echo staffText($staff['dateJoined']); ?>"
@@ -77,7 +84,11 @@ function staffText($value)
                     <div class="staff-card">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="staff-avatar-placeholder" aria-hidden="true"></div>
+                                <div class="staff-avatar-placeholder">
+                        <?php if ($profileImage != ''): ?>
+                            <img src="<?php echo staffText($profileImage); ?>" class="staff-profile-image" alt="<?php echo staffText($staff['firstName'] . ' ' . $staff['lastName']); ?> profile picture">
+                        <?php endif; ?>
+                    </div>
                                 <div>
                                 <h5 class="fw-bold mb-0"><?php echo staffText($staff['firstName'] . ' ' . $staff['lastName']); ?></h5>
                                 <div class="staff-role text-muted"><?php echo staffText($staff['staffType']); ?></div>

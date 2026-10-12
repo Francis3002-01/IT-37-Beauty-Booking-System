@@ -18,7 +18,7 @@ $status = $_SESSION['beautician_status'] ?? 'error';
 unset($_SESSION['beautician_message'], $_SESSION['beautician_status']);
 
 //retrieve beautician records from database
-$result = $conn->query('SELECT beauticianID, beauticianType, lastName, firstName, address, contactNo, employmentStatus, dateJoined, dateSeparated FROM beauticians ORDER BY beauticianID');
+$result = $conn->query('SELECT * FROM beauticians ORDER BY beauticianID');
 $beauticians = [];
 while ($beautician = $result->fetch_assoc()) {
     $beauticians[] = $beautician;
@@ -35,6 +35,7 @@ function beauticianText($value)
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo beauticianText($pageTitle); ?></title>
@@ -73,6 +74,13 @@ function beauticianText($value)
         </div>
         <div class="row" id="beauticiansGrid">
             <?php foreach ($beauticians as $beautician): ?>
+                <?php
+                $profileImage = $beautician['profileImage'] ?? '';
+                if (!preg_match('/^uploads\/beauticians\/[a-f0-9]{32}\.(jpg|png|webp)$/', $profileImage)
+                    || !is_file(__DIR__ . '/' . $profileImage)) {
+                    $profileImage = '';
+                }
+                ?>
                 <div class="col-md-6 col-lg-4 mb-4 beautician-record" id="beautician-<?php echo (int) $beautician['beauticianID']; ?>"
                      data-first-name="<?php echo beauticianText($beautician['firstName']); ?>"
                      data-last-name="<?php echo beauticianText($beautician['lastName']); ?>"
@@ -82,11 +90,16 @@ function beauticianText($value)
                      data-status="<?php echo beauticianText($beautician['employmentStatus']); ?>"
                      data-joined="<?php echo beauticianText($beautician['dateJoined']); ?>"
                      data-separated="<?php echo beauticianText($beautician['dateSeparated']); ?>"
+                     data-image="<?php echo beauticianText($profileImage); ?>"
                 >
                     <div class="beautician-card">
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center gap-3">
-                                <div class="beautician-avatar-placeholder" aria-hidden="true"></div>
+                                <div class="beautician-avatar-placeholder">
+                                    <?php if ($profileImage != ''): ?>
+                                        <img src="<?php echo beauticianText($profileImage); ?>" class="beautician-profile-image" alt="<?php echo beauticianText($beautician['firstName'] . ' ' . $beautician['lastName']); ?> profile picture">
+                                    <?php endif; ?>
+                                </div>
                                 <div>
                                 <h5 class="fw-bold mb-0"><?php echo beauticianText($beautician['firstName'] . ' ' . $beautician['lastName']); ?></h5>
                                 <div class="beautician-specialization text-muted"><?php echo beauticianText($beautician['beauticianType']); ?></div>

@@ -18,7 +18,7 @@ $status = $_SESSION['client_status'] ?? 'error';
 unset($_SESSION['client_message'], $_SESSION['client_status']);
 
 //retrieve client records from database
-$result = $conn->query('SELECT clientID, lastName, firstName, address, contactNo FROM client ORDER BY clientID');
+$result = $conn->query('SELECT * FROM client ORDER BY clientID');
 $clients = [];
 while ($client = $result->fetch_assoc()) {
     $clients[] = $client;
@@ -36,11 +36,12 @@ function clientText($value)
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo clientText($pageTitle); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/clients.css" rel="stylesheet">
+    <link href="css/clients.css?v=<?php echo filemtime(__DIR__ . '/css/clients.css'); ?>" rel="stylesheet">
 </head>
 <body>
 <?php include 'includes/sidebar.php'; ?>
@@ -61,13 +62,23 @@ function clientText($value)
         </div>
         <div class="d-flex flex-column gap-3" id="clientsList">
             <?php foreach ($clients as $client): ?>
+                <?php
+                $profileImage = $client['profileImage'] ?? '';
+                if (!preg_match('/^uploads\/clients\/[a-f0-9]{32}\.(jpg|png|webp)$/', $profileImage)
+                    || !is_file(__DIR__ . '/' . $profileImage)) $profileImage = '';
+                ?>
                 <div class="client-row-card client-record" id="client-<?php echo (int) $client['clientID']; ?>"
                      data-id="<?php echo (int) $client['clientID']; ?>"
                      data-first-name="<?php echo clientText($client['firstName']); ?>"
                      data-last-name="<?php echo clientText($client['lastName']); ?>"
                      data-address="<?php echo clientText($client['address']); ?>"
+                     data-image="<?php echo clientText($profileImage); ?>"
                      data-contact="<?php echo clientText($client['contactNo']); ?>">
-                    <div class="client-avatar-placeholder"></div>
+                    <div class="client-avatar-placeholder">
+                        <?php if ($profileImage != ''): ?>
+                            <img src="<?php echo clientText($profileImage); ?>" class="client-profile-image" alt="<?php echo clientText($client['firstName'] . ' ' . $client['lastName']); ?> profile picture">
+                        <?php endif; ?>
+                    </div>
                     <div class="client-info-wrapper">
                         <div class="client-card-header">
                             <div class="d-flex align-items-center gap-2">
@@ -75,11 +86,12 @@ function clientText($value)
                                 <span class="badge bg-light text-dark">#<?php echo (int) $client['clientID']; ?></span>
                             </div>
                             <div class="client-actions">
-                                <button type="button" class="btn-card-action" onclick="editClient(<?php echo (int) $client['clientID']; ?>)">Edit</button>
+                                <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewClient(<?php echo (int) $client['clientID']; ?>)">VIEW</button>
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editClient(<?php echo (int) $client['clientID']; ?>)">EDIT</button>
                                 <form method="POST" action="backend%20logic/clients_backend.php" onsubmit="return confirmClientDelete()" class="d-inline">
                                     <input type="hidden" name="action" value="delete">
                                     <input type="hidden" name="clientID" value="<?php echo (int) $client['clientID']; ?>">
-                                    <button type="submit" class="btn-card-action btn-delete">Delete</button>
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">DELETE</button>
                                 </form>
                             </div>
                         </div>
