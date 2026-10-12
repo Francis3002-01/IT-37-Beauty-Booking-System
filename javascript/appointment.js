@@ -1,102 +1,32 @@
-/**
- * APPOINTMENTS MODULE JAVASCRIPT LOGIC (MOCK DATA / FRONT-END ONLY)
- * ------------------------------------------------------------------
- * Purpose: Manages UI interactivity, filtering, modal forms, conflict checking,
- * and CRUD actions using an in-memory array before connecting to MySQL/PHP.
- */
-
-// ------------------------------------------------------------------
-// 1. HARDCODED IN-MEMORY DATABASE (MOCK DATA)
-// ------------------------------------------------------------------
-
-// Database State
-const db = {
-    users: [
-        { userID: 1, userRole: 'Administrator', userName: 'admin_john', lastName: 'Orevillo', firstName: 'John Francis', address: 'Dauin', contactNo: '09123456789' }
-    ],
-    clients: [
-        { clientID: 1, lastName: 'Smith', firstName: 'Jane', address: 'Dumaguete City', contactNo: '09987654321' },
-        { clientID: 2, lastName: 'Johnson', firstName: 'Michael', address: 'Valencia', contactNo: '09112233445' }
-    ],
-    resources: [
-        { resourceID: 1, resourceType: 'Hair Stylist', lastName: 'Santos', firstName: 'Maria', address: 'Dauin', contactNo: '09223344556', employmentStatus: 'Active', dateJoined: '2025-01-10', dateSeparated: null },
-        { resourceID: 2, resourceType: 'Makeup Artist', lastName: 'Reyes', firstName: 'Carlo', address: 'Dumaguete', contactNo: '09334455667', employmentStatus: 'Active', dateJoined: '2025-03-15', dateSeparated: null }
-    ],
-    services: [
-        { serviceID: 1, serviceName: 'Signature Haircut & Styling', serviceType: 'Hair', description: 'Complete wash, cut, and professional blowout styling.', basePrice: 750.00, duration: 60 },
-        { serviceID: 2, serviceName: 'Bridal Glam Makeup', serviceType: 'Makeup', description: 'Full glam makeup application with lashes and touch-up kit.', basePrice: 1500.00, duration: 90 }
-    ],
-    availability: [
-        { availabilityID: 1, resourceID: 1, availableDate: '2026-10-05', startTime: '08:00', endTime: '17:00' },
-        { availabilityID: 2, resourceID: 2, availableDate: '2026-10-05', startTime: '09:00', endTime: '18:00' },
-        { availabilityID: 3, resourceID: 1, availableDate: '2026-10-06', startTime: '08:00', endTime: '17:00' },
-        { availabilityID: 4, resourceID: 2, availableDate: '2026-10-06', startTime: '09:00', endTime: '18:00' }
-    ],
-    appointments: [
-        {
-            appointmentID: 'APT-1001',
-            userID: 1,
-            clientID: 1,
-            appointmentDate: '2026-10-05',
-            startTime: '09:00',
-            endTime: '10:00',
-            appointmentType: 'Salon service',
-            venue: 'Salon Address (Main Branch)',
-            appointmentStatus: 'Confirmed',
-            totalCost: 750.00,
-            paymentStatus: 'Paid',
-            appointmentNotes: 'Prefers gentle hair products.',
-            serviceID: 1,
-            resourceID: 1
-        },
-        {
-            appointmentID: 'APT-1002',
-            userID: 1,
-            clientID: 2,
-            appointmentDate: '2026-10-05',
-            startTime: '13:00',
-            endTime: '14:30',
-            appointmentType: 'Home service',
-            venue: '123 Acacia St., Dumaguete',
-            appointmentStatus: 'Pending',
-            totalCost: 1500.00,
-            paymentStatus: 'Unpaid',
-            appointmentNotes: 'Bridal trial makeup session.',
-            serviceID: 2,
-            resourceID: 2
-        }
-    ],
-    payments: [
-        { paymentID: 1, clientID: 1, appointmentID: 'APT-1001', amount: 750.00, paymentMethod: 'Cash', paymentDate: '2026-10-05' }
-    ]
-};
+/* =========================================================
+   APPOINTMENTS MODULE
+   Database-backed appointment display and form handling
+   ========================================================= */
 
 let currentFilter = 'All';
-let deleteTargetId = null;
+let availabilityRequest = 0;
 
 document.addEventListener('DOMContentLoaded', () => {
-    renderAppointments();
     populateDropdowns();
-    document.getElementById('appointmentDate').value = '2026-10-05';
-});
+    renderAppointments();
+    toggleVenueInput();
 
-function populateDropdowns() {
-    const serviceSelect = document.getElementById('serviceSelect');
-    serviceSelect.innerHTML = db.services.map(s => `<option value="${s.serviceID}">${s.serviceName} - ₱${s.basePrice.toFixed(2)}</option>`).join('');
+    const form = document.getElementById('appointmentForm');
 
-    const resourceSelect = document.getElementById('resourceSelect');
-    resourceSelect.innerHTML = db.resources.map(r => `<option value="${r.resourceID}">${r.firstName} ${r.lastName} (${r.resourceType})</option>`).join('');
-}
+    if (form) {
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-function renderAppointments(filteredList = null) {
-    const grid = document.getElementById('appointmentsGrid');
-    const list = filteredList || db.appointments;
+            const available = await validateAvailability();
 
-    if (list.length === 0) {
-        grid.innerHTML = `<div class="col-12 text-center text-muted py-5">No appointments found.</div>`;
-        return;
-    }
+            if (!available) {
+                alert(
+                    'Please choose an available beautician, date, and time before saving.'
+                );
+                return;
+            }
 
+<<<<<<< HEAD
     grid.innerHTML = list.map(apt => {
         const client = db.clients.find(c => c.clientID === apt.clientID) || { firstName: 'Unknown', lastName: 'Client' };
         const service = db.services.find(s => s.serviceID === apt.serviceID) || { serviceName: 'Service', serviceType: 'General' };
@@ -184,17 +114,108 @@ function filterAppointments() {
                    clientName.includes(query) ||
                    a.venue.toLowerCase().includes(query) ||
                    a.appointmentType.toLowerCase().includes(query);
+=======
+            // Submit the form to PHP after availability is confirmed.
+            form.submit();
+>>>>>>> 3414e15 (Login Functionality, and Appointment functionality)
         });
     }
+});
 
-    renderAppointments(filtered);
+
+/* =========================================================
+   POPULATE FORM DROPDOWNS FROM MYSQL DATA
+   ========================================================= */
+
+function populateDropdowns() {
+    const clientSelect = document.getElementById('clientSelect');
+    const serviceSelect = document.getElementById('serviceSelect');
+    const resourceSelect = document.getElementById('resourceSelect');
+
+    // Clients
+    clientSelect.innerHTML =
+        '<option value="" disabled selected>Select a Client...</option>';
+
+    (window.dbClients || []).forEach(client => {
+        const option = document.createElement('option');
+
+        option.value = client.clientID;
+        option.textContent =
+            `${client.lastName}, ${client.firstName}`;
+
+        clientSelect.appendChild(option);
+    });
+
+    // Services
+    serviceSelect.innerHTML =
+        '<option value="" disabled selected>Select a Service...</option>';
+
+    (window.dbServices || []).forEach(service => {
+        const option = document.createElement('option');
+
+        option.value = service.serviceID;
+        option.textContent =
+            `${service.serviceName} - ₱${Number(service.price).toFixed(2)}`;
+
+        serviceSelect.appendChild(option);
+    });
+
+    // Active beauticians
+    resourceSelect.innerHTML =
+        '<option value="" disabled selected>Select a Beautician...</option>';
+
+    (window.dbBeauticians || []).forEach(beautician => {
+        const option = document.createElement('option');
+
+        option.value = beautician.beauticianID;
+        option.textContent =
+            `${beautician.firstName} ${beautician.lastName} (${beautician.beauticianType})`;
+
+        resourceSelect.appendChild(option);
+    });
 }
 
+
+/* =========================================================
+   AUTO-FILL CLIENT DETAILS
+   ========================================================= */
+
+function fillClientDetails() {
+    const clientID = document.getElementById('clientSelect').value;
+
+    const client = (window.dbClients || []).find(
+        item => String(item.clientID) === String(clientID)
+    );
+
+    document.getElementById('clientLastName').value =
+        client ? client.lastName : '';
+
+    document.getElementById('clientFirstName').value =
+        client ? client.firstName : '';
+
+    document.getElementById('clientAddress').value =
+        client ? client.address : '';
+
+    document.getElementById('clientContactNo').value =
+        client ? client.contactNo : '';
+}
+
+
+/* =========================================================
+   APPOINTMENT TYPE AND VENUE
+   ========================================================= */
+
 function toggleVenueInput() {
-    const type = document.getElementById('appointmentType').value;
-    const venueWrapper = document.getElementById('venueWrapper');
-    const venueInput = document.getElementById('venueInput');
-    if (type === 'Home service') {
+    const appointmentType =
+        document.getElementById('appointmentType').value;
+
+    const venueWrapper =
+        document.getElementById('venueWrapper');
+
+    const venueInput =
+        document.getElementById('venueInput');
+
+    if (appointmentType === 'Home service') {
         venueWrapper.style.display = 'block';
         venueInput.required = true;
     } else {
@@ -204,201 +225,429 @@ function toggleVenueInput() {
     }
 }
 
-function updateServiceCost() {}
 
-function validateAvailability() {
-    const resourceID = parseInt(document.getElementById('resourceSelect').value);
-    const date = document.getElementById('appointmentDate').value;
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
-    const editId = document.getElementById('editAppointmentId').value;
-    const banner = document.getElementById('conflictBanner');
-
-    if (!date || !startTime || !endTime) {
-        banner.style.backgroundColor = '#f8f9fa';
-        banner.style.color = '#495057';
-        banner.innerText = 'Conflict Check: Select date and time';
-        return true;
-    }
-
-    const avail = db.availability.find(a => a.resourceID === resourceID && a.availableDate === date);
-    if (!avail || startTime < avail.startTime || endTime > avail.endTime) {
-        banner.style.backgroundColor = '#fff5f5';
-        banner.style.color = '#fa5252';
-        banner.innerText = 'Conflict Check: Resource unavailable on schedule';
-        return false;
-    }
-
-    const overlap = db.appointments.find(a => {
-        if (editId && a.appointmentID === editId) return false;
-        if (a.resourceID === resourceID && a.appointmentDate === date && a.appointmentStatus !== 'Cancelled') {
-            return (startTime < a.endTime && endTime > a.startTime);
-        }
-        return false;
-    });
-
-    if (overlap) {
-        banner.style.backgroundColor = '#fff5f5';
-        banner.style.color = '#fa5252';
-        banner.innerText = `Conflict Check: Overlapping booking (${overlap.startTime} - ${overlap.endTime})`;
-        return false;
-    }
-
-    banner.style.backgroundColor = '#e6fcf5';
-    banner.style.color = '#0ca678';
-    banner.innerText = 'Conflict Check: No Overlaps: Clear';
-    return true;
-}
+/* =========================================================
+   OPEN CREATE APPOINTMENT MODAL
+   ========================================================= */
 
 function openCreateModal() {
-    document.getElementById('modalTitle').innerText = 'Create New Appointment';
-    document.getElementById('saveAppointmentBtn').innerText = 'Create Appointment';
-    document.getElementById('appointmentForm').reset();
+    const form = document.getElementById('appointmentForm');
+
+    form.reset();
+
     document.getElementById('editAppointmentId').value = '';
-    document.getElementById('appointmentDate').value = '2026-10-05';
+
+    document.getElementById('modalTitle').textContent =
+        'Create New Appointment';
+
+    document.getElementById('saveAppointmentBtn').textContent =
+        'Create Appointment';
+
     toggleVenueInput();
-    validateAvailability();
+
+    document.getElementById('conflictBanner').textContent =
+        'Conflict Check: Select beautician, date and time';
 }
 
-function handleFormSubmit(event) {
-    event.preventDefault();
 
-    if (!validateAvailability()) {
+/* =========================================================
+   SERVICE PRICE
+   Price is calculated and saved by the PHP backend.
+   ========================================================= */
+
+function updateServiceCost() {
+    // The PHP backend retrieves the actual price from MySQL.
+}
+
+
+/* =========================================================
+   CHECK BEAUTICIAN AVAILABILITY THROUGH PHP
+   ========================================================= */
+
+async function validateAvailability() {
+    const requestId = ++availabilityRequest;
+
+    const beauticianID =
+        document.getElementById('resourceSelect').value;
+
+    const appointmentDate =
+        document.getElementById('appointmentDate').value;
+
+    const startTime =
+        document.getElementById('startTime').value;
+
+    const endTime =
+        document.getElementById('endTime').value;
+
+    const editID =
+        document.getElementById('editAppointmentId').value;
+
+    const banner =
+        document.getElementById('conflictBanner');
+
+    function showBanner(message, available) {
+        banner.style.backgroundColor =
+            available ? '#e6fcf5' : '#fff5f5';
+
+        banner.style.color =
+            available ? '#0ca678' : '#fa5252';
+
+        banner.textContent = 'Conflict Check: ' + message;
+    }
+
+    if (!beauticianID || !appointmentDate || !startTime || !endTime) {
+        showBanner('Select beautician, date and time', false);
+        return false;
+    }
+
+    if (startTime >= endTime) {
+        showBanner('End time must be after start time', false);
+        return false;
+    }
+
+    showBanner('Checking availability...', false);
+
+    try {
+        const response = await fetch(
+            'backend%20logic/appointment_backend.php',
+            {
+                method: 'POST',
+
+                headers: {
+                    'Content-Type':
+                        'application/x-www-form-urlencoded;charset=UTF-8'
+                },
+
+                body: new URLSearchParams({
+                    action: 'check_availability',
+                    beauticianID: beauticianID,
+                    appointmentDate: appointmentDate,
+                    startTime: startTime,
+                    endTime: endTime,
+                    editAppointmentId: editID
+                })
+            }
+        );
+
+        if (!response.ok) {
+            throw new Error('Availability request failed');
+        }
+
+        const result = await response.json();
+
+        // Ignore outdated requests.
+        if (requestId !== availabilityRequest) {
+            return false;
+        }
+
+        showBanner(
+            result.message || 'Availability checked',
+            Boolean(result.available)
+        );
+
+        return Boolean(result.available);
+
+    } catch (error) {
+        if (requestId === availabilityRequest) {
+            showBanner('Unable to check database availability', false);
+        }
+
+        console.error('Availability check error:', error);
+
+        return false;
+    }
+}
+
+
+/* =========================================================
+   RENDER APPOINTMENTS RETRIEVED FROM MYSQL
+   ========================================================= */
+
+function renderAppointments(list = window.dbAppointments || []) {
+    const grid = document.getElementById('appointmentsGrid');
+
+    if (!grid) {
         return;
     }
 
-    const editId = document.getElementById('editAppointmentId').value;
-    const lastName = document.getElementById('clientLastName').value;
-    const firstName = document.getElementById('clientFirstName').value;
-    const address = document.getElementById('clientAddress').value;
-    const contactNo = document.getElementById('clientContactNo').value;
-    const appointmentType = document.getElementById('appointmentType').value;
-    const venue = appointmentType === 'Home service' ? document.getElementById('venueInput').value : 'Salon Address (Main Branch)';
-    const serviceID = parseInt(document.getElementById('serviceSelect').value);
-    const resourceID = parseInt(document.getElementById('resourceSelect').value);
-    const appointmentDate = document.getElementById('appointmentDate').value;
-    const startTime = document.getElementById('startTime').value;
-    const endTime = document.getElementById('endTime').value;
-    const paymentMethod = document.getElementById('paymentMethod').value;
-    const paymentStatus = document.getElementById('paymentStatus').value;
-    const appointmentNotes = document.getElementById('appointmentNotes').value;
-
-    let client = db.clients.find(c => c.lastName.toLowerCase() === lastName.toLowerCase() && c.firstName.toLowerCase() === firstName.toLowerCase());
-    let clientID;
-    if (!client) {
-        clientID = db.clients.length + 1;
-        db.clients.push({ clientID, lastName, firstName, address, contactNo });
-    } else {
-        clientID = client.clientID;
+    if (!list.length) {
+        grid.innerHTML = `
+            <div class="col-12 text-center text-muted py-5">
+                No appointments found.
+            </div>
+        `;
+        return;
     }
 
-    const service = db.services.find(s => s.serviceID === serviceID);
-    const totalCost = service ? service.basePrice : 500.00;
+    grid.innerHTML = list.map(apt => {
+        const paymentStatus = apt.paymentStatus || 'Unpaid';
 
-    if (editId) {
-        const apt = db.appointments.find(a => a.appointmentID === editId);
-        if (apt) {
-            apt.clientID = clientID;
-            apt.appointmentType = appointmentType;
-            apt.venue = venue;
-            apt.serviceID = serviceID;
-            apt.resourceID = resourceID;
-            apt.appointmentDate = appointmentDate;
-            apt.startTime = startTime;
-            apt.endTime = endTime;
-            apt.paymentMethod = paymentMethod;
-            apt.paymentStatus = paymentStatus;
-            apt.totalCost = totalCost;
-            apt.appointmentNotes = appointmentNotes;
-        }
-    } else {
-        const newId = 'APT-' + (1000 + db.appointments.length + 1);
-        db.appointments.push({
-            appointmentID: newId,
-            userID: 1,
-            clientID,
-            appointmentDate,
-            startTime,
-            endTime,
-            appointmentType,
-            venue,
-            appointmentStatus: 'Confirmed',
-            totalCost,
-            paymentStatus,
-            appointmentNotes,
-            serviceID,
-            resourceID
+        const paymentBadgeClass =
+            paymentStatus === 'Paid' ? 'badge-paid' : 'badge-unpaid';
+
+        const clientName =
+            `${apt.clientFirstName || 'Unknown'} ${apt.clientLastName || 'Client'}`;
+
+        const beauticianName =
+            `${apt.beauticianFirstName || 'Unassigned'} ${apt.beauticianLastName || ''}`;
+
+        const venue =
+            apt.venue || 'Salon Address (Main Branch)';
+
+        const notes =
+            apt.appointmentNotes || 'None';
+
+        return `
+            <div class="col-md-6 mb-3">
+                <div class="appointment-item-card">
+
+                    <div class="d-flex justify-content-between
+                                align-items-start mb-3 flex-wrap gap-2">
+
+                        <div>
+                            <h5 class="fw-bold mb-1">
+                                APT-${escapeHtml(apt.appointmentID)}
+                            </h5>
+
+                            <div class="text-muted" style="font-size:.85rem">
+                                ${escapeHtml(apt.appointmentDate)}
+                                |
+                                ${escapeHtml(apt.startTime)}
+                                -
+                                ${escapeHtml(apt.endTime)}
+                            </div>
+                        </div>
+
+                        <div class="d-flex gap-2 align-items-center">
+                            <span class="${paymentBadgeClass}">
+                                ${escapeHtml(paymentStatus)}
+                            </span>
+
+                            <span class="badge-status">
+                                ${escapeHtml(apt.appointmentStatus)}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="row g-2 mb-3">
+
+                        <div class="col-6">
+                            <div class="field-label">Appointment Type</div>
+                            <div class="field-value">
+                                ${escapeHtml(apt.appointmentType)}
+                            </div>
+                        </div>
+
+                        <div class="col-6">
+                            <div class="field-label">Service Type</div>
+                            <div class="field-value">
+                                ${escapeHtml(apt.serviceCategory || 'General')}
+                                (${escapeHtml(apt.serviceName || 'Service')})
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="field-label">Venue</div>
+                            <div class="field-value">
+                                ${escapeHtml(venue)}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="field-label">Client</div>
+                            <div class="field-value">
+                                ${escapeHtml(clientName)}
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="field-label">Assigned Beautician</div>
+                            <div class="field-value">
+                                ${escapeHtml(beauticianName)}
+                                (${escapeHtml(apt.beauticianType || '')})
+                            </div>
+                        </div>
+
+                        <div class="col-12">
+                            <div class="field-label">Appointment Notes</div>
+                            <div class="field-value text-muted">
+                                ${escapeHtml(notes)}
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="border-top pt-3 d-flex
+                                justify-content-between align-items-center
+                                flex-wrap gap-2">
+
+                        <div>
+                            <div class="field-label">Service Cost</div>
+
+                            <div class="fw-bold fs-6">
+                                ₱${Number(apt.totalCost || 0).toFixed(2)}
+                            </div>
+                        </div>
+
+                        <button
+                            type="button"
+                            class="btn btn-sm btn-outline-dark px-3 rounded-pill"
+                            onclick="viewAppointment(${Number(apt.appointmentID)})"
+                        >
+                            VIEW
+                        </button>
+
+                    </div>
+
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+
+/* =========================================================
+   ESCAPE DATABASE VALUES BEFORE DISPLAYING THEM
+   ========================================================= */
+
+function escapeHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#039;'
+    })[char]);
+}
+
+
+/* =========================================================
+   STATUS FILTERS
+   ========================================================= */
+
+function setFilter(status, button) {
+    document.querySelectorAll('.filter-pill').forEach(pill => {
+        pill.classList.remove('active');
+    });
+
+    button.classList.add('active');
+
+    currentFilter = status;
+
+    filterAppointments();
+}
+
+
+/* =========================================================
+   SEARCH AND FILTER DATABASE APPOINTMENTS
+   ========================================================= */
+
+function filterAppointments() {
+    const searchInput = document.getElementById('searchInput');
+
+    const query = searchInput.value.trim().toLowerCase();
+
+    let list = window.dbAppointments || [];
+
+    if (currentFilter !== 'All') {
+        list = list.filter(apt =>
+            apt.appointmentStatus === currentFilter
+        );
+    }
+
+    if (query) {
+        list = list.filter(apt => {
+            const searchableValues = [
+                apt.appointmentID,
+                apt.clientFirstName,
+                apt.clientLastName,
+                apt.serviceName,
+                apt.beauticianFirstName,
+                apt.beauticianLastName,
+                apt.venue,
+                apt.appointmentType
+            ];
+
+            return searchableValues.some(value =>
+                String(value || '').toLowerCase().includes(query)
+            );
         });
     }
 
-    const modalEl = document.getElementById('appointmentModal');
-    const modal = bootstrap.Modal.getInstance(modalEl);
-    modal.hide();
-    renderAppointments();
+    renderAppointments(list);
 }
+
+
+/* =========================================================
+   VIEW APPOINTMENT DETAILS
+   ========================================================= */
 
 function viewAppointment(id) {
-    const apt = db.appointments.find(a => a.appointmentID === id);
-    if (!apt) return;
-    const client = db.clients.find(c => c.clientID === apt.clientID);
-    const service = db.services.find(s => s.serviceID === apt.serviceID);
-    const resource = db.resources.find(r => r.resourceID === apt.resourceID);
+    const apt = (window.dbAppointments || []).find(
+        item => Number(item.appointmentID) === Number(id)
+    );
 
-    document.getElementById('viewModalTitle').innerText = `Appointment Details (${apt.appointmentID})`;
-    document.getElementById('viewModalBody').innerHTML = `
-        <p><strong>Date & Time:</strong> ${apt.appointmentDate} (${apt.startTime} - ${apt.endTime})</p>
-        <p><strong>Type:</strong> ${apt.appointmentType}</p>
-        <p><strong>Venue:</strong> ${apt.venue}</p>
-        <p><strong>Client:</strong> ${client.firstName} ${client.lastName} (${client.contactNo})</p>
-        <p><strong>Service:</strong> ${service.serviceName} - ₱${apt.totalCost}</p>
-        <p><strong>Assigned Beautician:</strong> ${resource.firstName} ${resource.lastName} (${resource.resourceType})</p>
-        <p><strong>Payment Status:</strong> ${apt.paymentStatus}</p>
-        <p><strong>Notes:</strong> ${apt.appointmentNotes || 'None'}</p>
-    `;
-    new bootstrap.Modal(document.getElementById('viewModal')).show();
-}
-
-function editAppointment(id) {
-    const apt = db.appointments.find(a => a.appointmentID === id);
-    if (!apt) return;
-    const client = db.clients.find(c => c.clientID === apt.clientID);
-
-    document.getElementById('modalTitle').innerText = `Edit Appointment (${apt.appointmentID})`;
-    document.getElementById('saveAppointmentBtn').innerText = 'Save Changes';
-    document.getElementById('editAppointmentId').value = apt.appointmentID;
-
-    document.getElementById('clientLastName').value = client.lastName;
-    document.getElementById('clientFirstName').value = client.firstName;
-    document.getElementById('clientAddress').value = client.address;
-    document.getElementById('clientContactNo').value = client.contactNo;
-    document.getElementById('appointmentType').value = apt.appointmentType;
-    toggleVenueInput();
-    document.getElementById('venueInput').value = apt.venue;
-    document.getElementById('serviceSelect').value = apt.serviceID;
-    document.getElementById('resourceSelect').value = apt.resourceID;
-    document.getElementById('appointmentDate').value = apt.appointmentDate;
-    document.getElementById('startTime').value = apt.startTime;
-    document.getElementById('endTime').value = apt.endTime;
-    document.getElementById('paymentStatus').value = apt.paymentStatus;
-    document.getElementById('appointmentNotes').value = apt.appointmentNotes || '';
-
-    validateAvailability();
-    new bootstrap.Modal(document.getElementById('appointmentModal')).show();
-}
-
-function confirmDeleteAppointment(id) {
-    deleteTargetId = id;
-    document.getElementById('deleteAppointmentIdText').innerText = id;
-    new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
-}
-
-function executeDeleteAppointment() {
-    if (deleteTargetId) {
-        db.appointments = db.appointments.filter(a => a.appointmentID !== deleteTargetId);
-        deleteTargetId = null;
-        const modalEl = document.getElementById('deleteConfirmModal');
-        const modal = bootstrap.Modal.getInstance(modalEl);
-        modal.hide();
-        renderAppointments();
+    if (!apt) {
+        return;
     }
+
+    const body = document.getElementById('viewModalBody');
+
+    document.getElementById('viewModalTitle').textContent =
+        `Appointment Details (APT-${apt.appointmentID})`;
+
+    body.innerHTML = `
+        <p>
+            <strong>Date & Time:</strong>
+            ${escapeHtml(apt.appointmentDate)}
+            (${escapeHtml(apt.startTime)} - ${escapeHtml(apt.endTime)})
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+            ${escapeHtml(apt.appointmentStatus)}
+        </p>
+
+        <p>
+            <strong>Type:</strong>
+            ${escapeHtml(apt.appointmentType)}
+        </p>
+
+        <p>
+            <strong>Venue:</strong>
+            ${escapeHtml(apt.venue || 'Salon Address (Main Branch)')}
+        </p>
+
+        <p>
+            <strong>Client:</strong>
+            ${escapeHtml(apt.clientFirstName)}
+            ${escapeHtml(apt.clientLastName)}
+        </p>
+
+        <p>
+            <strong>Service:</strong>
+            ${escapeHtml(apt.serviceName)}
+            — ₱${Number(apt.totalCost || 0).toFixed(2)}
+        </p>
+
+        <p>
+            <strong>Beautician:</strong>
+            ${escapeHtml(apt.beauticianFirstName)}
+            ${escapeHtml(apt.beauticianLastName)}
+        </p>
+
+        <p>
+            <strong>Payment:</strong>
+            ${escapeHtml(apt.paymentStatus || 'Unpaid')}
+        </p>
+
+        <p>
+            <strong>Notes:</strong>
+            ${escapeHtml(apt.appointmentNotes || 'None')}
+        </p>
+    `;
+
+    new bootstrap.Modal(
+        document.getElementById('viewModal')
+    ).show();
 }
