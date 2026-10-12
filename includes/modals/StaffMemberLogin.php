@@ -1,5 +1,7 @@
 <?php
-session_start();
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 
 require_once __DIR__ . '/../../config/database.php';
 
@@ -59,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 ?>
 <<<<<<< HEAD
+<<<<<<< HEAD
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -85,6 +88,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 <!-- Staff Login Modal -->
 <div class="modal fade" id="staffLoginModal" tabindex="-1" aria-labelledby="staffLoginModalLabel" aria-hidden="true">
+=======
+
+<!-- Staff Login Modal -->
+<div class="modal fade" id="staffLoginModal" tabindex="-1"
+    aria-labelledby="staffLoginModalLabel" aria-hidden="true">
+
+>>>>>>> origin/main
     <div class="modal-dialog modal-dialog-centered">
         <section class="modal-content">
 
@@ -92,17 +102,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 <h2 class="modal-title fs-5" id="staffLoginModalLabel">
                     Staff Portal Login
                 </h2>
+<<<<<<< HEAD
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 >>>>>>> 3414e15 (Login Functionality, and Appointment functionality)
+=======
+
+                <button type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"></button>
+>>>>>>> origin/main
             </header>
 
-            <!-- Error Message Alert -->
-            <?php if (!empty($error)): ?>
-                <div class="alert alert-danger py-2 px-3 text-center fs-7 mb-4" role="alert">
-                    <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
-                </div>
-            <?php endif; ?>
+            <section class="modal-body">
 
+<<<<<<< HEAD
 <<<<<<< HEAD
             <!-- Login Form -->
             <form method="POST" action="StaffMemberLogin.php" autocomplete="off">
@@ -110,21 +124,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <label for="username" class="form-label text-secondary fw-semibold fs-7">Username</label>
                     <input type="text" name="username" id="username" class="form-control custom-input" placeholder="Enter staff username" required autofocus>
                 </div>
+=======
+                <?php if (!empty($error)): ?>
+                    <aside class="alert alert-danger" role="alert">
+                        <?php echo htmlspecialchars($error, ENT_QUOTES, 'UTF-8'); ?>
+                    </aside>
+                <?php endif; ?>
+>>>>>>> origin/main
 
-                <div class="mb-4">
-                    <label for="password" class="form-label text-secondary fw-semibold fs-7">Password</label>
-                    <input type="password" name="password" id="password" class="form-control custom-input" placeholder="Enter password" required>
-                </div>
+                <form method="POST"
+                    action="includes/modals/StaffMemberLogin.php"
+                    autocomplete="off">
 
-                <button type="submit" class="btn btn-dark w-100 py-2.5 fw-semibold custom-login-btn mb-3">
-                    Sign In
-                </button>
+                    <div class="mb-3">
+                        <label for="staffUsername" class="form-label">
+                            Username
+                        </label>
 
-                <div class="text-center">
-                    <a href="index.php" class="text-decoration-none text-muted fs-7">&larr; Back to Role Selection</a>
-                </div>
-            </form>
+                        <input type="text"
+                            name="username"
+                            id="staffUsername"
+                            class="form-control custom-input"
+                            placeholder="Enter staff username"
+                            required>
+                    </div>
 
+<<<<<<< HEAD
         </div>
     </main>
 </body>
@@ -170,12 +195,37 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </button>
 
                     <div class="text-center">
+=======
+                    <div class="mb-3">
+                        <label for="staffPassword" class="form-label">
+                            Password
+                        </label>
+
+                        <input type="password"
+                            name="password"
+                            id="staffPassword"
+                            class="form-control custom-input"
+                            placeholder="Enter password"
+                            required>
+                    </div>
+
+                    <footer>
+                        <button type="submit"
+                            class="btn btn-dark w-100 py-2 fw-semibold custom-login-btn mb-3">
+                            Sign In
+                        </button>
+
+>>>>>>> origin/main
                         <button type="button"
                             class="btn btn-outline-secondary w-100 py-2 fw-semibold custom-cancel-btn"
                             data-bs-dismiss="modal">
                             Cancel
                         </button>
+<<<<<<< HEAD
                     </div>
+=======
+                    </footer>
+>>>>>>> origin/main
 
                 </form>
 
@@ -183,5 +233,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         </section>
     </div>
+<<<<<<< HEAD
 </div>
 >>>>>>> 3414e15 (Login Functionality, and Appointment functionality)
+=======
+</div>
+>>>>>>> origin/main

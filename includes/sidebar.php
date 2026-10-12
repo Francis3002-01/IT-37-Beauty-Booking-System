@@ -12,7 +12,7 @@ $currentPage = basename($_SERVER['PHP_SELF']);
 ?>
 <div class="sidebar">
     <div>
-        <div class="brand-title">beautyReserve.</div>
+        <div class="brand-title"><img src="beautyreserve-logo.png" alt="beautyReserve" style="display: block; width: 200px; max-width: 100%; height: auto;"></div>
         
         <div class="nav-section-title">My Panel</div>
         <nav class="nav flex-column">

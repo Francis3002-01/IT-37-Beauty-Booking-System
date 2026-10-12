@@ -74,12 +74,12 @@ document.addEventListener('DOMContentLoaded', () => {
                         </div>
                     </div>
 
-                    <div class="border-top pt-3 d-flex justify-content-between align-items-center">
+                    <div class="border-top pt-3 d-flex justify-content-between align-items-center flex-wrap gap-2">
                         <div>
                             <div class="field-label">Service Cost</div>
                             <div class="fw-bold fs-6">₱${Number(apt.totalCost).toFixed(2)}</div>
                         </div>
-                        <div class="d-flex gap-2">
+                        <div class="d-flex gap-2 flex-wrap">
                             <button class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewAppointment('${apt.appointmentID}')">VIEW</button>
                             <button class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editAppointment('${apt.appointmentID}')">EDIT</button>
                             <button class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="confirmDeleteAppointment('${apt.appointmentID}')">DELETE</button>

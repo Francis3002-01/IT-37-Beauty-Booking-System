@@ -1,103 +1,422 @@
 /**
- * BEAUTY RESERVE - STAFF MODULE STYLESHEET
+ * BEAUTY RESERVE MODULE STYLESHEET
  * ------------------------------------------------------------------
- * Purpose: Custom card layout matching the Staff grid mockup.
+ * Purpose: Controls layout structure, custom UI components (pills, cards, badges),
+ * and dashboard responsive styling for Appointments and Staff.
  */
 
-/* Staff Card Container */
+/* General Styling */
+body {
+    background-color: #f4f5f7;
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    color: #212529;
+}
+
+/* Sidebar Styling */
+.sidebar {
+    width: 260px;
+    min-height: 100vh;
+    background-color: #ffffff;
+    border-right: 1px solid #e9ecef;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 24px 16px;
+    z-index: 1000;
+}
+.brand-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    color: #000000;
+    margin-bottom: 24px;
+    padding-left: 12px;
+}
+.nav-section-title {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #6c757d;
+    font-weight: 600;
+    padding-left: 12px;
+    margin-bottom: 8px;
+}
+.nav-link {
+    color: #495057;
+    padding: 10px 12px;
+    border-radius: 8px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+.nav-link:hover, .nav-link.active {
+    background-color: #f1f3f5;
+    color: #000000;
+}
+.nav-link.active {
+    font-weight: 600;
+}
+.sub-nav {
+    padding-left: 24px;
+}
+
+/* Main Content Wrapper */
+.main-content {
+    margin-left: 260px;
+    padding: 32px;
+}
+.dashboard-card {
+    background-color: #ffffff;
+    border-radius: 24px;
+    padding: 32px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+    min-height: 90vh;
+}
+
+/* Top Controls */
+.search-pill {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    border-radius: 50rem;
+    padding: 10px 20px;
+    width: 100%;
+    max-width: 320px;
+    outline: none;
+}
+.search-pill:focus {
+    border-color: #212529;
+    box-shadow: 0 0 0 3px rgba(33, 37, 41, 0.05);
+}
+.btn-create {
+    background-color: #212529;
+    color: #ffffff;
+    border-radius: 50rem;
+    padding: 10px 24px;
+    font-weight: 500;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+.btn-create:hover {
+    background-color: #343a40;
+    color: #ffffff;
+}
+.filter-pill {
+    background-color: #f1f3f5;
+    border: none;
+    border-radius: 50rem;
+    padding: 6px 18px;
+    font-size: 0.875rem;
+    color: #495057;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+.filter-pill:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+.filter-dropdown {
+    padding-right: 36px;
+    cursor: pointer;
+}
+.filter-pill.active {
+    background-color: #dee2e6;
+    color: #212529;
+    font-weight: 600;
+}
+
+/* Item Cards (Appointments & Staff) */
 .staff-card {
     background-color: #ffffff;
     border: 1px solid #e9ecef;
     border-radius: 20px;
     padding: 20px;
-    margin-bottom: 24px;
-    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+    height: 100%;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
-
 .staff-card:hover {
     border-color: #ced4da;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
 }
 
-/* Avatar Image & Header Section */
+/* Divider below the name and primary-key badge */
+.staff-avatar-placeholder {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #d1d5db;
+    flex-shrink: 0;
+}
+
+.staff-role {
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.25;
+    margin-top: 2px;
+}
+
+.staff-card .field-value {
+    font-weight: 400;
+}
+
+.staff-card > div:first-child {
+    border-bottom: var(--bs-border-width, 1px) solid var(--bs-border-color, #dee2e6);
+    padding-bottom: 1rem;
+}
+
+.appointment-item-card,
+.staff-item-card {
+    background-color: #fdfdfe;
+    border: 1px solid #e9ecef;
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 20px;
+    transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.appointment-item-card:hover,
+.staff-item-card:hover {
+    border-color: #ced4da;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+}
+
+/* Staff Avatar Header */
+.staff-employment-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-weight: 600;
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    border-radius: 50rem;
+    padding: 6px 16px;
+    font-size: 0.75rem;
+    color: #6c757d;
+    min-width: 80px;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.staff-employment-status::before {
+    content: '';
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: currentColor;
+}
+.staff-employment-status.status-active {
+    text-transform: uppercase;
+    background-color: #e6f4ea;
+    border-color: #c4e5cf;
+    color: #216e39;
+}
+.staff-employment-status.status-active::before {
+    display: none;
+}
+.staff-employment-status.status-on-leave {
+    text-transform: uppercase;
+    background-color: #fff4d6;
+    border-color: #ffe0a3;
+    color: #805600;
+}
+.staff-employment-status.status-on-leave::before {
+    display: none;
+}
+.staff-employment-status.status-inactive {
+    text-transform: uppercase;
+    background-color: #fde8e8;
+    border-color: #f5c2c7;
+    color: #a32632;
+}
+.staff-employment-status.status-inactive::before {
+    display: none;
+}
+
 .staff-avatar {
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background-color: #e9ecef;
+    background-color: #dee2e6;
     object-fit: cover;
     flex-shrink: 0;
 }
 
-.staff-name {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: #000000;
-    margin-bottom: 2px;
+/* Badges */
+.badge-paid {
+    background-color: #e6fcf5;
+    color: #0ca678;
+    border: 1px solid #c3fae8;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 50rem;
 }
-
-.staff-role {
-    font-size: 0.85rem;
-    color: #6c757d;
-    font-weight: 500;
+.badge-unpaid {
+    background-color: #fff9db;
+    color: #f59f00;
+    border: 1px solid #ffec99;
+    font-weight: 600;
+    font-size: 0.75rem;
+    padding: 4px 10px;
+    border-radius: 50rem;
 }
-
-/* Status Pill Badge */
-.status-badge {
-    background-color: #000000;
+.badge-status {
+    background-color: #212529;
     color: #ffffff;
-    font-size: 0.65rem;
-    font-weight: 800;
+    font-weight: 600;
+    font-size: 0.75rem;
     padding: 4px 12px;
     border-radius: 50rem;
-    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Card Field Labels & Values */
+.field-label {
+    font-size: 0.725rem;
+    text-transform: uppercase;
+    color: #868e96;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    margin-bottom: 2px;
+}
+.field-value {
+    font-size: 0.9rem;
+    color: #343a40;
+    font-weight: 500;
+}
+
+/* Card Action Buttons */
+.btn-card-action {
+    background-color: #f8f9fa;
+    border: 1px solid #dee2e6;
+    color: #343a40;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 5px 14px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
     text-transform: uppercase;
 }
-
-.status-badge.on-leave {
-    background-color: #6c757d;
+.btn-card-action:hover {
+    background-color: #212529;
+    color: #ffffff;
+    border-color: #212529;
 }
-
-.status-badge.inactive {
+.btn-card-action.btn-delete:hover {
     background-color: #e03131;
+    color: #ffffff;
+    border-color: #e03131;
 }
 
-/* Field Rows inside Card */
-.staff-details-list {
-    border-top: 1px solid #f1f3f5;
-    border-bottom: 1px solid #f1f3f5;
-    padding: 12px 0;
-    margin: 16px 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-}
-
-.detail-row {
+/* Sidebar Profile Footer */
+.user-profile-box {
     display: flex;
     align-items: center;
-    font-size: 0.85rem;
+    gap: 12px;
+    padding-top: 16px;
+    border-top: 1px solid #e9ecef;
+}
+.user-avatar {
+    width: 36px;
+    height: 36px;
+    background-color: #ced4da;
+    border-radius: 50%;
 }
 
-.detail-label {
-    width: 130px;
-    color: #6c757d;
+/* Modal Form Customizations */
+.modal-content {
+    border-radius: 20px;
+    border: none;
+}
+
+/* ================================================================
+ * STAFF MODAL WIREFRAME STYLES
+ * ================================================================ */
+.staff-modal-content {
+    border-radius: 20px;
+    padding: 20px;
+    border: none;
+    background-color: #ffffff;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+}
+
+.modal-subtitle {
+    font-size: 0.875rem;
+    color: #8c8c8c !important;
+}
+
+.staff-label {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #4a4a4a;
+    margin-bottom: 6px;
+}
+
+/* Muted Grey Inputs matching the wireframe */
+.staff-input {
+    background-color: #c8beba;
+    border: none;
+    border-radius: 10px;
+    padding: 10px 14px;
+    color: #ffffff;
     font-weight: 600;
-    flex-shrink: 0;
 }
 
-.detail-value {
+.staff-input:focus {
+    background-color: #b8ac87;
+    border-color: transparent;
+    box-shadow: 0 0 0 3px rgba(100, 100, 100, 0.15);
+    color: #ffffff;
+}
+
+.staff-input::placeholder {
+    color: #ffffff;
+    font-weight: 600;
+    opacity: 0.95;
+}
+
+select.staff-input {
+    color: #ffffff;
+    background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23ffffff' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+/* Action Buttons */
+.btn-staff-cancel {
+    background-color: #e9e3e1;
     color: #000000;
-    font-weight: 500;
-    word-break: break-word;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 10px 24px;
+    border: none;
+    transition: background-color 0.2s ease;
 }
 
-/* Card Actions Footer */
-.staff-card-footer {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
+.btn-staff-cancel:hover {
+    background-color: #dad2d0;
+    color: #000000;
 }
+
+.btn-staff-save {
+    background-color: #5c5856;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 10px;
+    padding: 10px 24px;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+
+.btn-staff-save:hover {
+    background-color: #484543;
+    color: #ffffff;
+}
+
+/* Profile photos and square View placeholder */
+.staff-avatar-placeholder { overflow: hidden; }
+.staff-profile-image { width: 100%; height: 100%; object-fit: cover; display: block; }
+.staff-profile-image[hidden] { display: none; }
+.staff-view-photo { width: 160px; height: 160px; max-width: 100%; border-radius: 6px; background-color: #d1d5db; overflow: hidden; }
+

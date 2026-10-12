@@ -20,6 +20,7 @@ $dbReportsData = $dbReportsData ?? null;
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle ?? 'beautyReserve.'; ?></title>
@@ -28,7 +29,6 @@ $dbReportsData = $dbReportsData ?? null;
     <!-- Font Awesome Icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <!-- Custom Stylesheets -->
-    <link href="css/beauticians.css" rel="stylesheet">
     <link href="css/reports.css" rel="stylesheet">
 </head>
 <body>

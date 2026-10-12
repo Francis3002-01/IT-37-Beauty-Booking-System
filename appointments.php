@@ -86,6 +86,7 @@ include 'includes/sidebar.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
@@ -103,6 +104,7 @@ include 'includes/sidebar.php';
 <div class="main-content">
     <div class="dashboard-card">
 
+<<<<<<< HEAD
         <h1 class="fw-bold mb-4" style="font-size: 1.75rem;">
             Appointments
         </h1>
@@ -141,11 +143,17 @@ include 'includes/sidebar.php';
                 Create New Appointment
             </button>
 
+=======
+        <!-- Top Search & Create Bar -->
+        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+            <input type="text" id="searchInput" class="search-pill" placeholder="Search Appointments..." oninput="filterAppointments()">
+            <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#appointmentModal" onclick="openCreateModal()">Create New Appointment</button>
+>>>>>>> origin/main
         </div>
 
 <<<<<<< HEAD
         <!-- Filter Pills -->
-        <div class="d-flex gap-2 mb-4">
+        <div class="d-flex gap-2 mb-4 flex-wrap">
             <button class="filter-pill active" onclick="setFilter('All', this)">All</button>
             <button class="filter-pill" onclick="setFilter('Pending', this)">Pending</button>
             <button class="filter-pill" onclick="setFilter('Confirmed', this)">Confirmed</button>
