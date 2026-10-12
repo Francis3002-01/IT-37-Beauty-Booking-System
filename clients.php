@@ -41,7 +41,7 @@ function clientText($value)
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo clientText($pageTitle); ?></title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="css/clients.css" rel="stylesheet">
+    <link href="css/clients.css?v=<?php echo filemtime(__DIR__ . '/css/clients.css'); ?>" rel="stylesheet">
 </head>
 <body>
 <?php include 'includes/sidebar.php'; ?>
@@ -76,7 +76,7 @@ function clientText($value)
                      data-contact="<?php echo clientText($client['contactNo']); ?>">
                     <div class="client-avatar-placeholder">
                         <?php if ($profileImage != ''): ?>
-                            <img src="<?php echo clientText($profileImage); ?>" class="client-profile-image" alt="<?php echo clientText($client['firstName'] . ' ' . $client['lastName']); ?> profile picture">
+                            <img src="<?php echo clientText($profileImage); ?>" class="client-profile-image rounded-circle object-fit-cover" width="60" height="60" alt="<?php echo clientText($client['firstName'] . ' ' . $client['lastName']); ?> profile picture">
                         <?php endif; ?>
                     </div>
                     <div class="client-info-wrapper">

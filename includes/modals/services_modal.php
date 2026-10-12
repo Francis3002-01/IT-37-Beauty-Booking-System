@@ -66,7 +66,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body" id="viewModalBody">
-                <div class="service-image-placeholder"><img id="viewServiceImage" alt="Service image" hidden></div>
+                <div class="service-image-placeholder"><img id="viewServiceImage" class="w-100 object-fit-cover" height="180" alt="Service image" hidden></div>
                 <p><strong>ID:</strong> <span id="viewServiceId"></span></p>
                 <p><strong>Service Name:</strong> <span id="viewServiceName"></span></p>
                 <p><strong>Category:</strong> <span id="viewServiceCategory"></span></p>

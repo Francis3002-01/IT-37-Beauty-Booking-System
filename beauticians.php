@@ -97,7 +97,7 @@ function beauticianText($value)
                             <div class="d-flex align-items-center gap-3">
                                 <div class="beautician-avatar-placeholder">
                                     <?php if ($profileImage != ''): ?>
-                                        <img src="<?php echo beauticianText($profileImage); ?>" class="beautician-profile-image" alt="<?php echo beauticianText($beautician['firstName'] . ' ' . $beautician['lastName']); ?> profile picture">
+                                        <img src="<?php echo beauticianText($profileImage); ?>" class="beautician-profile-image rounded-circle object-fit-cover" width="60" height="60" alt="<?php echo beauticianText($beautician['firstName'] . ' ' . $beautician['lastName']); ?> profile picture">
                                     <?php endif; ?>
                                 </div>
                                 <div>

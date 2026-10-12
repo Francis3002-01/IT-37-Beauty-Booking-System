@@ -39,7 +39,7 @@
   <div class="modal-header"><h5 class="modal-title" id="viewStaffTitle">Staff Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
   <div class="modal-body">
    <div class="row g-4">
-    <div class="col-md-4"><div class="staff-view-photo"><img id="viewStaffImage" class="staff-profile-image" alt="Staff profile picture" hidden></div></div>
+    <div class="col-md-4"><div class="staff-view-photo"><img id="viewStaffImage" class="staff-profile-image object-fit-cover" width="160" height="160" alt="Staff profile picture" hidden></div></div>
     <div class="col-md-4">
    <p><strong>ID:</strong> <span id="viewStaffId"></span></p>
    <p><strong>First Name:</strong> <span id="viewStaffFirstName"></span></p>

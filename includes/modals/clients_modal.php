@@ -45,7 +45,7 @@
  <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content p-3">
   <div class="modal-header"><h5 class="modal-title" id="viewClientTitle">Client Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
   <div class="modal-body"><div class="row g-4">
-   <div class="col-md-4"><div class="client-view-photo"><img id="viewClientImage" class="client-profile-image" alt="Client profile picture" hidden></div></div>
+   <div class="col-md-4"><div class="client-view-photo"><img id="viewClientImage" class="client-profile-image object-fit-cover" width="160" height="160" alt="Client profile picture" hidden></div></div>
    <div class="col-md-4">
     <p><strong>ID:</strong> <span id="viewClientId"></span></p>
     <p><strong>First Name:</strong> <span id="viewClientFirstName"></span></p>

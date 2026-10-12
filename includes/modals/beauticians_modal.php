@@ -44,7 +44,7 @@
   <div class="modal-body">
    <div class="row g-4">
     <div class="col-md-4">
-     <div class="beautician-view-photo"><img id="viewBeauticianImage" class="beautician-profile-image" alt="Beautician profile picture" hidden></div>
+     <div class="beautician-view-photo"><img id="viewBeauticianImage" class="beautician-profile-image object-fit-cover" width="160" height="160" alt="Beautician profile picture" hidden></div>
     </div>
     <div class="col-md-4">
    <p><strong>ID:</strong> <span id="viewBeauticianId"></span></p>
