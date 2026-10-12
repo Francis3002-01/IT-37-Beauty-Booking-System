@@ -15,7 +15,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 }
 $message = $_SESSION['staff_message'] ?? '';
 $status = $_SESSION['staff_status'] ?? 'error';
-unset($_SESSION['staff_message'], $_SESSION['staff_status']);
+$messageDuration = (int) ($_SESSION['staff_message_duration'] ?? 3000);
+unset($_SESSION['staff_message'], $_SESSION['staff_status'], $_SESSION['staff_message_duration']);
 
 //retrieve staff records from database
 $sql = "SELECT staff.staffID, staff.staffType, staff.firstName, staff.lastName, staff.address, staff.contactNo, staff.employmentStatus, staff.dateJoined, staff.dateSeparated, `user`.userName, (staff.imageData IS NOT NULL) AS hasImage 
@@ -51,7 +52,7 @@ $canManageStaff = in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', '
     
     <!-- Conditional feedback alert (hidden when empty) -->
     <?php if (!empty($message)): ?>
-        <div id="staffFeedback" class="alert alert-<?php echo $status === 'success' ? 'success' : 'danger'; ?>" role="alert">
+        <div id="staffFeedback" data-duration="<?php echo $messageDuration; ?>" class="alert alert-<?php echo $status === 'success' ? 'success' : 'danger'; ?>" role="alert">
             <?php echo staffText($message); ?>
         </div>
     <?php endif; ?>
