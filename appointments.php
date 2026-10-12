@@ -85,6 +85,7 @@ include 'includes/sidebar.php';
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
@@ -94,167 +95,112 @@ include 'includes/sidebar.php';
 
     <link
         href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-        rel="stylesheet"
-    >
+        rel="stylesheet">
     <link href="css/appointments.css" rel="stylesheet">
 </head>
 
 <body>
 
-<div class="main-content">
-    <div class="dashboard-card">
+    <div class="main-content">
+        <div class="dashboard-card">
 
-<<<<<<< HEAD
-        <h1 class="fw-bold mb-4" style="font-size: 1.75rem;">
-            Appointments
-        </h1>
+            <h1 class="fw-bold mb-4" style="font-size: 1.75rem;">
+                Appointments
+            </h1>
 
-        <?php if (isset($_GET['success'])): ?>
-            <div class="alert alert-success">
-                Appointment saved successfully.
-            </div>
-        <?php elseif (isset($_GET['error'])): ?>
-            <div class="alert alert-danger">
-                Appointment could not be saved.
-                Please check the required fields, availability,
-                and PHP error log.
-            </div>
-        <?php endif; ?>
+            <?php if (isset($_GET['success'])): ?>
+                <div class="alert alert-success">
+                    Appointment saved successfully.
+                </div>
+            <?php elseif (isset($_GET['error'])): ?>
+                <div class="alert alert-danger">
+                    Appointment could not be saved.
+                    Please check the required fields, availability,
+                    and PHP error log.
+                </div>
+            <?php endif; ?>
 
-        <!-- Search and Create Button -->
-        <div class="d-flex justify-content-between align-items-center
+            <!-- Search and Create Button -->
+            <div class="d-flex justify-content-between align-items-center
                     mb-4 flex-wrap gap-3">
 
-            <input
-                type="text"
-                id="searchInput"
-                class="search-pill"
-                placeholder="Search appointments..."
-                oninput="filterAppointments()"
-            >
+                <input
+                    type="text"
+                    id="searchInput"
+                    class="search-pill"
+                    placeholder="Search appointments..."
+                    oninput="filterAppointments()">
 
-            <button
-                type="button"
-                class="btn btn-create"
-                data-bs-toggle="modal"
-                data-bs-target="#appointmentModal"
-                onclick="openCreateModal()"
-            >
-                Create New Appointment
-            </button>
+                <button
+                    type="button"
+                    class="btn btn-create"
+                    data-bs-toggle="modal"
+                    data-bs-target="#appointmentModal"
+                    onclick="openCreateModal()">
+                    Create New Appointment
+                </button>
 
-=======
-        <!-- Top Search & Create Bar -->
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <input type="text" id="searchInput" class="search-pill" placeholder="Search Appointments..." oninput="filterAppointments()">
-            <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#appointmentModal" onclick="openCreateModal()">Create New Appointment</button>
->>>>>>> origin/main
+            </div>
+
+            <!-- Filter Pills -->
+            <div class="d-flex gap-2 mb-4 flex-wrap">
+                <button class="filter-pill active" onclick="setFilter('All', this)">All</button>
+                <button class="filter-pill" onclick="setFilter('Pending', this)">Pending</button>
+                <button class="filter-pill" onclick="setFilter('Confirmed', this)">Confirmed</button>
+                <button class="filter-pill" onclick="setFilter('Completed', this)">Completed</button>
+                <button class="filter-pill" onclick="setFilter('Cancelled', this)">Cancelled</button>
+            </div>
+
+            <!-- Database Appointments Display -->
+            <div class="row" id="appointmentsGrid"></div>
+
         </div>
-
-<<<<<<< HEAD
-        <!-- Filter Pills -->
-        <div class="d-flex gap-2 mb-4 flex-wrap">
-            <button class="filter-pill active" onclick="setFilter('All', this)">All</button>
-            <button class="filter-pill" onclick="setFilter('Pending', this)">Pending</button>
-            <button class="filter-pill" onclick="setFilter('Confirmed', this)">Confirmed</button>
-            <button class="filter-pill" onclick="setFilter('Completed', this)">Completed</button>
-            <button class="filter-pill" onclick="setFilter('Cancelled', this)">Cancelled</button>
-=======
-        <!-- Status Filters -->
-        <div class="d-flex gap-2 mb-4 flex-wrap">
-
-            <button
-                type="button"
-                class="filter-pill active"
-                onclick="setFilter('All', this)"
-            >
-                All
-            </button>
-
-            <button
-                type="button"
-                class="filter-pill"
-                onclick="setFilter('Pending', this)"
-            >
-                Pending
-            </button>
-
-            <button
-                type="button"
-                class="filter-pill"
-                onclick="setFilter('Confirmed', this)"
-            >
-                Confirmed
-            </button>
-
-            <button
-                type="button"
-                class="filter-pill"
-                onclick="setFilter('Completed', this)"
-            >
-                Completed
-            </button>
-
-            <button
-                type="button"
-                class="filter-pill"
-                onclick="setFilter('Cancelled', this)"
-            >
-                Cancelled
-            </button>
-
->>>>>>> 3414e15 (Login Functionality, and Appointment functionality)
-        </div>
-
-        <!-- Database Appointments Display -->
-        <div class="row" id="appointmentsGrid"></div>
-
     </div>
-</div>
 
-<!-- Appointment Modals -->
-<?php include 'includes/modals/appointment_modal.php'; ?>
+    <!-- Appointment Modals -->
+    <?php include 'includes/modals/appointment_modal.php'; ?>
 
-<!-- Send Database Records to JavaScript -->
-<script>
-    document.addEventListener('DOMContentLoaded', function () {
-    const successMessage = document.querySelector('.alert-success');
+    <!-- Send Database Records to JavaScript -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const successMessage = document.querySelector('.alert-success');
 
-    if (successMessage) {
-        setTimeout(function () {
-            successMessage.style.transition = 'opacity 0.5s ease';
-            successMessage.style.opacity = '0';
+            if (successMessage) {
+                setTimeout(function() {
+                    successMessage.style.transition = 'opacity 0.5s ease';
+                    successMessage.style.opacity = '0';
 
-            setTimeout(function () {
-                successMessage.remove();
-            }, 500);
-        }, 3000);
-      }
-    });
-    window.dbClients = <?= json_encode(
-        $dbClients,
-        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-    ) ?>;
+                    setTimeout(function() {
+                        successMessage.remove();
+                    }, 500);
+                }, 3000);
+            }
+        });
+        window.dbClients = <?= json_encode(
+                                $dbClients,
+                                JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+                            ) ?>;
 
-    window.dbServices = <?= json_encode(
-        $dbServices,
-        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-    ) ?>;
+        window.dbServices = <?= json_encode(
+                                $dbServices,
+                                JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+                            ) ?>;
 
-    window.dbBeauticians = <?= json_encode(
-        $dbBeauticians,
-        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-    ) ?>;
+        window.dbBeauticians = <?= json_encode(
+                                    $dbBeauticians,
+                                    JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+                                ) ?>;
 
-    window.dbAppointments = <?= json_encode(
-        $dbAppointments,
-        JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
-    ) ?>;
-</script>
+        window.dbAppointments = <?= json_encode(
+                                    $dbAppointments,
+                                    JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP
+                                ) ?>;
+    </script>
 
-<script src="javascript/appointment.js"></script>
+    <script src="javascript/appointment.js"></script>
 
-<?php include 'includes/footer.php'; ?>
+    <?php include 'includes/footer.php'; ?>
 
 </body>
+
 </html>
