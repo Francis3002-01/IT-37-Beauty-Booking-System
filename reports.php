@@ -80,7 +80,7 @@ $perClient = bookingQuery(
         <div class="main-content">
             <div class="dashboard-card">
                 <h1 class="fw-bold fs-3">Reports</h1>
-                <p class="text-muted">Bookings, payments received and outstanding balances.</p>
+                <p class="text-muted">Appointments, payments received and outstanding balances.</p>
                 <?php if ($error): ?>
                 <div class="alert alert-danger"><?php echo bookingText(
                     $error
@@ -122,7 +122,6 @@ $perClient = bookingQuery(
                             required
                         />
                     </div>
-                    <button class="btn btn-dark rounded-pill">Show Report</button>
                 </form>
                 <div class="report-section-card p-4 mb-4">
                     <h2 class="fs-5">Appointment Statistics</h2>
