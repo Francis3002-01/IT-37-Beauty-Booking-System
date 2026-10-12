@@ -18,8 +18,11 @@ $status = $_SESSION['staff_status'] ?? 'error';
 unset($_SESSION['staff_message'], $_SESSION['staff_status']);
 
 //retrieve staff records from database
-$result = $conn->query('SELECT staffID, staffType, firstName, lastName, address, contactNo, employmentStatus, dateJoined, dateSeparated, (imageData IS NOT NULL) AS hasImage FROM staff ORDER BY staffID');
-$staffRecords = [];
+$sql = "SELECT staff.*, `user`.userName, (staff.imageData IS NOT NULL) AS hasImage 
+        FROM staff 
+        LEFT JOIN `user` ON staff.staffID = `user`.staffID";
+$result = $conn->query($sql);
+$staffRecords =$result->fetch_all(MYSQLI_ASSOC);
 while ($staff = $result->fetch_assoc()) {
     $staffRecords[] = $staff;
 }
@@ -31,6 +34,7 @@ function staffText($value)
 {
     return htmlspecialchars((string) $value, ENT_QUOTES); //type errorr guard. htmlspecialchars convert, en_quotes converts '"
 }
+$isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -46,23 +50,35 @@ function staffText($value)
 <?php include 'includes/sidebar.php'; ?>
 <div class="main-content">
     <div class="dashboard-card">
-        <h1 class="fw-bold mb-4" style="font-size:1.75rem;">Staff</h1>
-        <?php if ($message != ''): ?>
-            <div id="staffFeedback" class="alert alert-<?php echo $status === 'success' ? 'success' : 'danger'; ?>" role="alert"><?php echo staffText($message); ?></div>
-        <?php endif; ?>
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <input type="text" id="searchInput" class="search-pill" placeholder="Search Staff..." oninput="filterStaff()">
-            <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Staff</button>
+    <h1 class="fw-bold mb-4" style="font-size:1.75rem;">Staff</h1>
+    
+    <!-- Conditional feedback alert (hidden when empty) -->
+    <?php if (!empty($message)): ?>
+        <div id="staffFeedback" class="alert alert-<?php echo $status === 'success' ? 'success' : 'danger'; ?>" role="alert">
+            <?php echo staffText($message); ?>
         </div>
-        <div class="d-flex gap-3 mb-4 flex-wrap">
-            <div>
+    <?php endif; ?>
+
+    <!-- Search box and Add New Staff button -->
+    <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
+        <input type="text" id="searchInput" class="search-pill" placeholder="Search Staff..." oninput="filterStaff()">
+        
+        <?php if ($isAdmin): ?>
+            <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Staff</button>
+        <?php endif; ?>
+    </div>
+
+    <!-- Status filter dropdown -->
+    <div class="d-flex gap-3 mb-4 flex-wrap">
+        <div>
             <select id="employmentFilter" class="form-select filter-pill filter-dropdown" aria-label="Status" onchange="filterStaff()">
                 <option value="All">Status</option>
                 <option value="Active">Active</option>
                 <option value="On Leave">On Leave</option>
                 <option value="Inactive">Inactive</option>
-            </select></div>
+            </select>
         </div>
+    </div>
         <div class="row" id="staffGrid">
             <?php foreach ($staffRecords as $staff): ?>
                 <?php
@@ -109,14 +125,22 @@ function staffText($value)
                             ?>
                             <span class="staff-employment-status <?php echo $statusClass; ?>"><?php echo staffText($staff['employmentStatus']); ?></span>
                         </div>
-                        <div class="border-top pt-3 d-flex justify-content-end gap-2 flex-wrap">
-                            <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewStaff(<?php echo (int) $staff['staffID']; ?>)">VIEW</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editStaff(<?php echo (int) $staff['staffID']; ?>)">EDIT</button>
-                            <form method="POST" action="backend%20logic/staff_backend.php" onsubmit="return confirmStaffDelete()" class="d-inline">
-                                <input type="hidden" name="action" value="delete"><input type="hidden" name="staffID" value="<?php echo (int) $staff['staffID']; ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">DELETE</button>
-                            </form>
-                        </div>
+                        
+                        <!-- Actions Row: Only visible to Admins -->
+                        <?php if ($isAdmin): ?>
+                            <div class="border-top pt-3 d-flex justify-content-end gap-2 flex-wrap">
+                                <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewStaff(<?php echo (int) $staff['staffID']; ?>)">VIEW</button>
+                                <?php 
+                                    $staffEditData = $staff;
+                                    unset($staffEditData['imageData']); // Remove heavy binary data so JSON encoding never breaks
+                                ?>
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick='editStaff(<?php echo htmlspecialchars(json_encode($staffEditData), ENT_QUOTES, 'UTF-8'); ?>)'>EDIT</button>
+                                <form method="POST" action="backend%20logic/staff_backend.php" onsubmit="return confirmStaffDelete()" class="d-inline">
+                                    <input type="hidden" name="action" value="delete"><input type="hidden" name="staffID" value="<?php echo (int) $staff['staffID']; ?>">
+                                    <button type="button" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="confirmStaffDelete(<?php echo (int) $staff['staffID']; ?>)">DELETE</button>
+                                </form>
+                            </div>
+                        <?php endif; ?>
                     </div>
                 </div>
             <?php endforeach; ?>

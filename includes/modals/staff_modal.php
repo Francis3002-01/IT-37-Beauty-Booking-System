@@ -9,10 +9,23 @@
      <div id="staffImageHelp" class="form-text">JPG, PNG or WebP, up to 2 MB.</div></div>
     <input type="hidden" id="editStaffId" name="staffID">
     <input type="hidden" id="staffAction" name="action" value="create">
-    <div class="mb-3"><label for="staffFirstName" class="form-label field-label">First Name</label>
-     <input type="text" class="form-control rounded-3" id="staffFirstName" name="firstName" maxlength="50" required oninput="this.setCustomValidity('')"></div>
-    <div class="mb-3"><label for="staffLastName" class="form-label field-label">Last Name</label>
-     <input type="text" class="form-control rounded-3" id="staffLastName" name="lastName" maxlength="50" required oninput="this.setCustomValidity('')"></div>
+    
+    <div class="mb-3">
+        <label for="staffFirstName" class="form-label field-label">First Name</label>
+        <input type="text" class="form-control rounded-3" id="staffFirstName" name="firstName" maxlength="50" required oninput="this.setCustomValidity('')">
+    </div>
+    <div class="mb-3">
+        <label for="staffLastName" class="form-label field-label">Last Name</label>
+        <input type="text" class="form-control rounded-3" id="staffLastName" name="lastName" maxlength="50" required oninput="this.setCustomValidity('')">
+    </div>
+    
+    <!-- NEW: Username Field for User Account Creation -->
+    <div class="mb-3" id="usernameContainer">
+        <label for="staffUsername" class="form-label field-label">Username</label>
+        <input type="text" class="form-control rounded-3" id="staffUsername" name="username" maxlength="50" placeholder="Enter username for login" autocomplete="off" required>
+        <div class="form-text">A secure random password will be auto-generated for this account.</div>
+    </div>
+
     <div class="mb-3"><label for="staffAddress" class="form-label field-label">Address</label>
      <textarea class="form-control rounded-3" id="staffAddress" name="address" maxlength="255" rows="2" required oninput="this.setCustomValidity('')"></textarea></div>
     <div class="mb-3"><label for="staffContactNo" class="form-label field-label">Contact Number</label>
@@ -33,27 +46,82 @@
   </div>
  </div></div>
 </div>
+
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal fade" id="deleteStaffModal" tabindex="-1" aria-labelledby="deleteStaffModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 rounded-4 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold text-danger" id="deleteStaffModalTitle">Confirm Deletion</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body py-3">
+                <p class="mb-0 text-secondary">Are you sure you want to delete this staff member? Records used in appointments cannot be deleted.</p>
+            </div>
+            <div class="modal-footer border-0 pt-0">
+                <button type="button" class="btn btn-light rounded-pill px-4" data-bs-dismiss="modal">Cancel</button>
+                <form id="deleteStaffForm" method="POST" action="backend%20logic/staff_backend.php" class="d-inline">
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" name="staffID" id="deleteStaffId">
+                    <button type="submit" class="btn btn-danger rounded-pill px-4">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 <!-- VIEW STAFF MODAL -->
-<div class="modal fade" id="viewStaffModal" tabindex="-1" aria-labelledby="viewStaffTitle" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content p-3">
-  <div class="modal-header"><h5 class="modal-title" id="viewStaffTitle">Staff Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-  <div class="modal-body">
-   <div class="row g-4">
-    <div class="col-md-4"><div class="staff-view-photo"><img id="viewStaffImage" class="staff-profile-image object-fit-cover" width="160" height="160" alt="Staff profile picture" hidden></div></div>
-    <div class="col-md-4">
-   <p><strong>ID:</strong> <span id="viewStaffId"></span></p>
-   <p><strong>First Name:</strong> <span id="viewStaffFirstName"></span></p>
-   <p><strong>Last Name:</strong> <span id="viewStaffLastName"></span></p>
-   <p><strong>Role:</strong> <span id="viewStaffType"></span></p>
-   <p><strong>Employment Status:</strong> <span id="viewStaffStatus"></span></p>
+<div class="modal fade" id="viewStaffModal" tabindex="-1" aria-labelledby="viewStaffModalTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content p-4 rounded-4 shadow">
+            <div class="modal-header border-0 pb-0">
+                <h5 class="modal-title fw-bold" id="viewStaffModalTitle">Staff Details (#<span id="viewStaffId"></span>)</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Profile Picture Preview -->
+                <div class="text-center mb-4">
+                    <img id="viewStaffImage" src="" alt="Profile Picture" class="rounded-circle object-fit-cover shadow-sm" width="90" height="90">
+                </div>
+
+                <div class="row g-3">
+                    <div class="col-6">
+                        <span class="text-muted small d-block">First Name</span>
+                        <span id="viewStaffFirstName" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Last Name</span>
+                        <span id="viewStaffLastName" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted small d-block">Role</span>
+                        <span id="viewStaffType" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Contact Number</span>
+                        <span id="viewStaffContactNo" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Employment Status</span>
+                        <span id="viewStaffStatus" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-12">
+                        <span class="text-muted small d-block">Address</span>
+                        <span id="viewStaffAddress" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Date Joined</span>
+                        <span id="viewStaffDateJoined" class="fw-semibold"></span>
+                    </div>
+                    <div class="col-6">
+                        <span class="text-muted small d-block">Date Separated</span>
+                        <span id="viewStaffDateSeparated" class="fw-semibold">-</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer border-0 pt-3">
+                <button type="button" class="btn btn-dark rounded-pill px-4 w-100" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
     </div>
-    <div class="col-md-4">
-   <p><strong>Address:</strong> <span id="viewStaffAddress"></span></p>
-   <p><strong>Contact Number:</strong> <span id="viewStaffContactNo"></span></p>
-   <p><strong>Date Joined:</strong> <span id="viewStaffDateJoined"></span></p>
-   <p><strong>Date Separated:</strong> <span id="viewStaffDateSeparated"></span></p>
-    </div>
-   </div>
-  </div>
- </div></div>
 </div>

@@ -88,26 +88,32 @@ function openCreateModal()
     bootstrap.Modal.getOrCreateInstance(document.getElementById('staffModal')).show();
 }
 //fill the edit form with the selected record
-function editStaff(id)
-{
-    const record = document.getElementById('staff-' + id);
-    if (!record) return;
-    document.getElementById('staffForm').reset();
-    clearStaffValidation();
-    document.getElementById('editStaffId').value = id;
+
+function editStaff(staff) {
+    // Set action to edit and populate staffID
     document.getElementById('staffAction').value = 'edit';
-    document.getElementById('staffFirstName').value = record.getAttribute('data-first-name');
-    document.getElementById('staffLastName').value = record.getAttribute('data-last-name');
-    document.getElementById('staffAddress').value = record.getAttribute('data-address');
-    document.getElementById('staffContactNo').value = record.getAttribute('data-contact');
-    document.getElementById('staffType').value = record.getAttribute('data-type');
-    document.getElementById('staffStatus').value = record.getAttribute('data-status');
-    document.getElementById('dateJoined').value = record.getAttribute('data-joined');
-    document.getElementById('dateSeparated').value = record.getAttribute('data-separated');
-    updateSeparationRequirement();
+    document.getElementById('editStaffId').value = staff.staffID;
+    
+    // Populate form fields
+    document.getElementById('staffFirstName').value = staff.firstName;
+    document.getElementById('staffLastName').value = staff.lastName;
+    
+    // --> THIS LINE POPULATES THE USERNAME IN THE MODAL <--
+    document.getElementById('staffUsername').value = staff.userName || ''; 
+    
+    document.getElementById('staffAddress').value = staff.address;
+    document.getElementById('staffContactNo').value = staff.contactNo;
+    document.getElementById('staffType').value = staff.staffType;
+    document.getElementById('staffStatus').value = staff.employmentStatus;
+    document.getElementById('dateJoined').value = staff.dateJoined;
+    document.getElementById('dateSeparated').value = staff.dateSeparated || '';
+    
+    // Update modal title and button text
     document.getElementById('staffModalTitle').textContent = 'Edit Staff';
     document.getElementById('saveStaffBtn').textContent = 'Save Changes';
-    bootstrap.Modal.getOrCreateInstance(document.getElementById('staffModal')).show();
+    
+    // Show the modal
+    new bootstrap.Modal(document.getElementById('staffModal')).show();
 }
 //use textContent so displayed values cannot become HTML
 function viewStaff(id)
@@ -131,8 +137,8 @@ function viewStaff(id)
     document.getElementById('viewStaffDateSeparated').textContent = record.getAttribute('data-separated') || '-';
     bootstrap.Modal.getOrCreateInstance(document.getElementById('viewStaffModal')).show();
 }
-function confirmStaffDelete()
-{
-    return confirm('Delete this staff member? Records used in appointments cannot be deleted.');
+function confirmStaffDelete(staffID) {
+    document.getElementById('deleteStaffId').value = staffID;
+    bootstrap.Modal.getOrCreateInstance(document.getElementById('deleteStaffModal')).show();
 }
 filterStaff();

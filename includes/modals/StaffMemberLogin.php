@@ -3,24 +3,64 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
     session_start();
 }
 
-// Hardcoded Staff Credentials
-define('STAFF_USER', 'staff');
-define('STAFF_PASS', '123');
+require_once __DIR__ . '/../../config/database.php';
 
-$error = '';
+$error = $_SESSION['staff_login_error'] ?? '';
+unset($_SESSION['staff_login_error']);
 
-// Handle Form Submission
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
-    $password = trim($_POST['password'] ?? '');
+    $password = $_POST['password'] ?? '';
 
-    if ($username === STAFF_USER && $password === STAFF_PASS) {
-        $_SESSION['user_role'] = 'staff';
-        $_SESSION['username']  = $username;
-        header('Location: appointments.php');
-        exit;
+    if (
+        !is_string($username) || !is_string($password) ||
+        $username === '' || $password === ''
+    ) {
+        $error = 'Please enter your username and password.';
     } else {
-        $error = 'Invalid username or password.';
+        // Prepared statement to look up the user in the database
+        // Checking for role = 'Receptionist' (or adjust to match your staff role name)
+        $sql = "SELECT userID, userName, passwordHash, role, accountStatus
+                FROM user
+                WHERE userName = ?
+                  AND role = 'Receptionist'
+                LIMIT 1";
+
+        $stmt = $conn->prepare($sql);
+
+        if ($stmt) {
+            $stmt->bind_param('s', $username);
+
+            if ($stmt->execute()) {
+                $result = $stmt->get_result();
+                $user = $result->fetch_assoc();
+
+                if ($user && $user['accountStatus'] === 'Active' && is_string($user['passwordHash']) && password_verify($password, $user['passwordHash'])) {
+                    // Prevent session fixation after successful login.
+                    session_regenerate_id(true);
+
+                    $_SESSION['userID'] = $user['userID'];
+                    $_SESSION['user_role'] = 'staff';
+                    $_SESSION['username'] = $user['userName'];
+
+                    $stmt->close();
+                    $conn->close();
+
+                    header('Location: ../../appointments.php');
+                    exit;
+                }
+            }
+
+            $stmt->close();
+        }
+
+        $conn->close();
+
+        // Save error message and return to the landing page modal view
+        $_SESSION['staff_login_error'] = 'Your username or password is incorrect.';
+
+        header('Location: ../../landingpage.php?login=staff');
+        exit;
     }
 }
 ?>
