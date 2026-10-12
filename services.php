@@ -1,4 +1,7 @@
 <?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 /* TAB VIEW FOR SERVICES
  * ------------------------------------------------------------------
  * Main tab for managing salon services.
