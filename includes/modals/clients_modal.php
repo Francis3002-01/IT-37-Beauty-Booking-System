@@ -42,19 +42,40 @@
 
 <!-- View client details -->
 <div class="modal fade" id="viewClientModal" tabindex="-1" aria-labelledby="viewClientTitle" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content p-3">
-  <div class="modal-header"><h5 class="modal-title" id="viewClientTitle">Client Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-  <div class="modal-body"><div class="row g-4">
-   <div class="col-md-4"><div class="client-view-photo"><img id="viewClientImage" class="client-profile-image object-fit-cover" width="160" height="160" alt="Client profile picture" hidden></div></div>
-   <div class="col-md-4">
-    <p><strong>ID:</strong> <span id="viewClientId"></span></p>
-    <p><strong>First Name:</strong> <span id="viewClientFirstName"></span></p>
-    <p><strong>Last Name:</strong> <span id="viewClientLastName"></span></p>
+ <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content p-4 rounded-4 shadow">
+   <div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold" id="viewClientTitle">Client Details (#<span id="viewClientId"></span>)</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
    </div>
-   <div class="col-md-4">
-    <p><strong>Address:</strong> <span id="viewClientAddress"></span></p>
-    <p><strong>Contact Number:</strong> <span id="viewClientContactNo"></span></p>
+   <div class="modal-body">
+    <div class="text-center mb-4">
+     <div class="rounded-circle shadow-sm d-inline-block overflow-hidden" style="width: 90px; height: 90px; background-color: #d1d5db;">
+      <img id="viewClientImage" class="w-100 h-100 object-fit-cover" alt="Client profile picture" width="90" height="90" hidden>
+     </div>
+    </div>
+    <div class="row g-3">
+     <div class="col-6">
+      <span class="text-muted small d-block">First Name</span>
+      <span id="viewClientFirstName" class="fw-semibold"></span>
+     </div>
+     <div class="col-6">
+      <span class="text-muted small d-block">Last Name</span>
+      <span id="viewClientLastName" class="fw-semibold"></span>
+     </div>
+     <div class="col-12">
+      <span class="text-muted small d-block">Contact Number</span>
+      <span id="viewClientContactNo" class="fw-semibold"></span>
+     </div>
+     <div class="col-12">
+      <span class="text-muted small d-block">Address</span>
+      <span id="viewClientAddress" class="fw-semibold"></span>
+     </div>
+    </div>
    </div>
-  </div></div>
- </div></div>
+   <div class="modal-footer border-0 pt-3">
+    <button type="button" class="btn btn-dark rounded-pill px-4 w-100" data-bs-dismiss="modal">Close</button>
+   </div>
+  </div>
+ </div>
 </div>

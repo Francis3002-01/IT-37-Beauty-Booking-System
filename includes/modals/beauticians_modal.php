@@ -39,27 +39,56 @@
 </div>
 <!-- VIEW BEAUTICIAN MODAL -->
 <div class="modal fade" id="viewBeauticianModal" tabindex="-1" aria-labelledby="viewBeauticianTitle" aria-hidden="true">
- <div class="modal-dialog modal-dialog-centered modal-lg"><div class="modal-content p-3">
-  <div class="modal-header"><h5 class="modal-title" id="viewBeauticianTitle">Beautician Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
-  <div class="modal-body">
-   <div class="row g-4">
-    <div class="col-md-4">
-     <div class="beautician-view-photo"><img id="viewBeauticianImage" class="beautician-profile-image object-fit-cover" width="160" height="160" alt="Beautician profile picture" hidden></div>
+ <div class="modal-dialog modal-dialog-centered">
+  <div class="modal-content p-4 rounded-4 shadow">
+   <div class="modal-header border-0 pb-0">
+    <h5 class="modal-title fw-bold" id="viewBeauticianTitle">Beautician Details (#<span id="viewBeauticianId"></span>)</h5>
+    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+   </div>
+   <div class="modal-body">
+    <div class="text-center mb-4">
+     <div class="rounded-circle shadow-sm d-inline-block overflow-hidden" style="width: 90px; height: 90px; background-color: #d1d5db;">
+      <img id="viewBeauticianImage" class="w-100 h-100 object-fit-cover" alt="Beautician profile picture" width="90" height="90" hidden>
+     </div>
     </div>
-    <div class="col-md-4">
-   <p><strong>ID:</strong> <span id="viewBeauticianId"></span></p>
-   <p><strong>First Name:</strong> <span id="viewBeauticianFirstName"></span></p>
-   <p><strong>Last Name:</strong> <span id="viewBeauticianLastName"></span></p>
-   <p><strong>Specialization:</strong> <span id="viewBeauticianType"></span></p>
-   <p><strong>Employment Status:</strong> <span id="viewBeauticianStatus"></span></p>
-    </div>
-    <div class="col-md-4">
-   <p><strong>Address:</strong> <span id="viewBeauticianAddress"></span></p>
-   <p><strong>Contact Number:</strong> <span id="viewBeauticianContactNo"></span></p>
-   <p><strong>Date Joined:</strong> <span id="viewBeauticianDateJoined"></span></p>
-   <p><strong>Date Separated:</strong> <span id="viewBeauticianDateSeparated"></span></p>
+    <div class="row g-3">
+     <div class="col-6">
+      <span class="text-muted small d-block">First Name</span>
+      <span id="viewBeauticianFirstName" class="fw-semibold"></span>
+     </div>
+     <div class="col-6">
+      <span class="text-muted small d-block">Last Name</span>
+      <span id="viewBeauticianLastName" class="fw-semibold"></span>
+     </div>
+     <div class="col-12">
+      <span class="text-muted small d-block">Specialization</span>
+      <span id="viewBeauticianType" class="fw-semibold"></span>
+     </div>
+     <div class="col-6">
+      <span class="text-muted small d-block">Contact Number</span>
+      <span id="viewBeauticianContactNo" class="fw-semibold"></span>
+     </div>
+     <div class="col-6">
+      <span class="text-muted small d-block">Employment Status</span>
+      <span id="viewBeauticianStatus" class="fw-semibold"></span>
+     </div>
+     <div class="col-12">
+      <span class="text-muted small d-block">Address</span>
+      <span id="viewBeauticianAddress" class="fw-semibold"></span>
+     </div>
+     <div class="col-6">
+      <span class="text-muted small d-block">Date Joined</span>
+      <span id="viewBeauticianDateJoined" class="fw-semibold"></span>
+     </div>
+     <div class="col-6">
+      <span class="text-muted small d-block">Date Separated</span>
+      <span id="viewBeauticianDateSeparated" class="fw-semibold"></span>
+     </div>
     </div>
    </div>
+   <div class="modal-footer border-0 pt-3">
+    <button type="button" class="btn btn-dark rounded-pill px-4 w-100" data-bs-dismiss="modal">Close</button>
+   </div>
   </div>
- </div></div>
+ </div>
 </div>
