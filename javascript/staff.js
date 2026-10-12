@@ -114,6 +114,12 @@ function viewStaff(id)
 {
     const record = document.getElementById('staff-' + id);
     if (!record) return;
+    const photo = document.getElementById('viewStaffImage');
+    const imagePath = record.getAttribute('data-image');
+    photo.hidden = !imagePath;
+    if (imagePath) photo.src = imagePath;
+    else photo.removeAttribute('src');
+
     document.getElementById('viewStaffId').textContent = id;
     document.getElementById('viewStaffFirstName').textContent = record.getAttribute('data-first-name');
     document.getElementById('viewStaffLastName').textContent = record.getAttribute('data-last-name');

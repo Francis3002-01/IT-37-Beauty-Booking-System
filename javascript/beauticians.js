@@ -115,6 +115,11 @@ function viewBeautician(id)
 {
     const record = document.getElementById('beautician-' + id);
     if (!record) return;
+    const photo = document.getElementById('viewBeauticianImage');
+    const imagePath = record.getAttribute('data-image');
+    photo.hidden = !imagePath;
+    if (imagePath) photo.src = imagePath;
+    else photo.removeAttribute('src');
     document.getElementById('viewBeauticianId').textContent = id;
     document.getElementById('viewBeauticianFirstName').textContent = record.getAttribute('data-first-name');
     document.getElementById('viewBeauticianLastName').textContent = record.getAttribute('data-last-name');

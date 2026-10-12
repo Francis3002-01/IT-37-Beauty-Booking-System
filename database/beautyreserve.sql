@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Oct 11, 2026 at 06:21 AM
+-- Generation Time: Oct 12, 2026 at 03:05 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -94,17 +94,18 @@ CREATE TABLE `beauticians` (
   `contactNo` varchar(11) NOT NULL,
   `employmentStatus` varchar(20) NOT NULL,
   `dateJoined` date NOT NULL,
-  `dateSeparated` date DEFAULT NULL
+  `dateSeparated` date DEFAULT NULL,
+  `profileImage` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `beauticians`
 --
 
-INSERT INTO `beauticians` (`beauticianID`, `beauticianType`, `lastName`, `firstName`, `address`, `contactNo`, `employmentStatus`, `dateJoined`, `dateSeparated`) VALUES
-(3001, 'Makeup Artist', 'Tejero', 'Rene', '22 Quezon St., Amigo Subd., Piapi, Dumaguete City', '09175837780', 'Active', '2026-10-11', NULL),
-(3002, 'Hair Stylist', 'Jocson', 'Salvador', '07 Sta. Catalina Street, Dumaguete City, 6200 Negros Oriental', '09626743779', 'On Leave', '2026-05-01', NULL),
-(3003, 'Nail Artist', 'Claws', 'Miyukie', 'Barangay Calindagan, Dumaguete City, Philippines, 6200', '09912921972', 'Inactive', '2026-08-24', '2026-10-09');
+INSERT INTO `beauticians` (`beauticianID`, `beauticianType`, `lastName`, `firstName`, `address`, `contactNo`, `employmentStatus`, `dateJoined`, `dateSeparated`, `profileImage`) VALUES
+(3001, 'Makeup Artist', 'Tejero', 'Rene', '22 Quezon St., Amigo Subd., Piapi, Dumaguete City', '09175837780', 'Active', '2026-10-11', NULL, NULL),
+(3002, 'Hair Stylist', 'Jocson', 'Salvador', '07 Sta. Catalina Street, Dumaguete City, 6200 Negros Oriental', '09626743779', 'On Leave', '2026-05-01', NULL, NULL),
+(3003, 'Nail Artist', 'Claws', 'Miyukie', 'Barangay Calindagan, Dumaguete City, Philippines, 6200', '09912921972', 'Inactive', '2026-08-24', '2026-10-09', NULL);
 
 -- --------------------------------------------------------
 
@@ -117,16 +118,17 @@ CREATE TABLE `client` (
   `lastName` varchar(50) NOT NULL,
   `firstName` varchar(50) NOT NULL,
   `address` varchar(255) NOT NULL,
-  `contactNo` varchar(11) NOT NULL
+  `contactNo` varchar(11) NOT NULL,
+  `profileImage` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `client`
 --
 
-INSERT INTO `client` (`clientID`, `lastName`, `firstName`, `address`, `contactNo`) VALUES
-(2001, 'Pham', 'Hanni', 'Melbourne, Victoria, Australia', '09271527532'),
-(2002, 'Edwards', 'Martin', 'Songpa-gu, Seoul, South Korea', '09270322008');
+INSERT INTO `client` (`clientID`, `lastName`, `firstName`, `address`, `contactNo`, `profileImage`) VALUES
+(2001, 'Pham', 'Hanni', 'Melbourne, Victoria, Australia', '09271527532', NULL),
+(2002, 'Edwards', 'Martin', 'Songpa-gu, Seoul, South Korea', '09270322008', NULL);
 
 -- --------------------------------------------------------
 
@@ -155,18 +157,19 @@ CREATE TABLE `service` (
   `serviceCategory` varchar(50) NOT NULL,
   `duration` int(11) NOT NULL,
   `price` decimal(10,2) NOT NULL,
-  `description` varchar(255) NOT NULL
+  `description` varchar(255) NOT NULL,
+  `serviceImage` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `service`
 --
 
-INSERT INTO `service` (`serviceID`, `serviceName`, `serviceCategory`, `duration`, `price`, `description`) VALUES
-(1001, 'Deep Cleansing Facial', 'Face', 60, 2000.00, 'Rejuvenating facial treatment that cleanses pores, exfoliates dead skin cells, and hydrates your skin.'),
-(1002, 'Hair Rebond & Treatment', 'Hair', 120, 3500.00, 'Premium hair straightening treatment combined with deep conditioning for smooth, shiny hair.'),
-(1003, 'Gel Manicure & Pedicure', 'Nails', 45, 1200.00, 'Long-lasting gel polish application with full nail cleaning and relaxing hand/foot massage.'),
-(1004, 'Aromatherapy Full Body Massage', 'Massage', 90, 2500.00, 'Soothing body massage with natural essential oils designed to reduce stress and physical tension.');
+INSERT INTO `service` (`serviceID`, `serviceName`, `serviceCategory`, `duration`, `price`, `description`, `serviceImage`) VALUES
+(1001, 'Deep Cleansing Facial', 'Face', 60, 2000.00, 'Rejuvenating facial treatment that cleanses pores, exfoliates dead skin cells, and hydrates your skin.', NULL),
+(1002, 'Hair Rebond & Treatment', 'Hair', 120, 3500.00, 'Premium hair straightening treatment combined with deep conditioning for smooth, shiny hair.', NULL),
+(1003, 'Gel Manicure & Pedicure', 'Nails', 45, 1200.00, 'Long-lasting gel polish application with full nail cleaning and relaxing hand/foot massage.', NULL),
+(1004, 'Aromatherapy Full Body Massage', 'Massage', 90, 2500.00, 'Soothing body massage with natural essential oils designed to reduce stress and physical tension.', NULL);
 
 -- --------------------------------------------------------
 
@@ -183,17 +186,18 @@ CREATE TABLE `staff` (
   `contactNo` varchar(11) NOT NULL,
   `employmentStatus` varchar(20) NOT NULL,
   `dateJoined` date NOT NULL,
-  `dateSeparated` date DEFAULT NULL
+  `dateSeparated` date DEFAULT NULL,
+  `profileImage` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `staff`
 --
 
-INSERT INTO `staff` (`staffID`, `staffType`, `lastName`, `firstName`, `address`, `contactNo`, `employmentStatus`, `dateJoined`, `dateSeparated`) VALUES
-(4001, 'Receptionist', 'Dangca', 'Gehlee', 'Las Piñas, Philippines', '09359192007', 'Active', '2026-09-26', NULL),
-(4002, 'Receptionist', 'Gaspar', 'John Lawrence', 'Muntinlupa, Philippines', '09354212004', 'On Leave', '2026-10-01', NULL),
-(4003, 'Receptionist', 'Laforteza', 'Sophia', 'Manila, Philippines', '09171221202', 'Inactive', '2026-08-29', '2026-10-11');
+INSERT INTO `staff` (`staffID`, `staffType`, `lastName`, `firstName`, `address`, `contactNo`, `employmentStatus`, `dateJoined`, `dateSeparated`, `profileImage`) VALUES
+(4001, 'Receptionist', 'Dangca', 'Gehlee', 'Las Piñas, Philippines', '09359192007', 'Active', '2026-09-26', NULL, NULL),
+(4002, 'Receptionist', 'Gaspar', 'John Lawrence', 'Muntinlupa, Philippines', '09354212004', 'On Leave', '2026-10-01', NULL, NULL),
+(4003, 'Receptionist', 'Laforteza', 'Sophia', 'Manila, Philippines', '09171221202', 'Inactive', '2026-08-29', '2026-10-11', NULL);
 
 -- --------------------------------------------------------
 

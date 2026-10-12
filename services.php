@@ -12,9 +12,7 @@ $pageTitle = "Services - beautyReserve";
 require_once __DIR__ . '/config/database.php';
 
 $result = $conn->query(
-    'SELECT serviceID, serviceName,
-            serviceCategory AS category,
-            duration, price, description
+    'SELECT *, serviceCategory AS category
      FROM service
      ORDER BY serviceID'
 );
@@ -36,6 +34,7 @@ function serviceText($value)
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle ?? 'beautyReserve.'; ?></title>
@@ -75,15 +74,25 @@ function serviceText($value)
         <!-- Services Cards Grid -->
         <div class="row" id="servicesGrid">
             <?php foreach ($dbServices as $service): ?>
+                <?php
+                $serviceImage = $service['serviceImage'] ?? '';
+                if (!preg_match('/^uploads\/services\/[a-f0-9]{32}\.(jpg|png|webp)$/', $serviceImage)
+                    || !is_file(__DIR__ . '/' . $serviceImage)) $serviceImage = '';
+                ?>
                 <div class="col-md-6 col-lg-6 mb-4 service-record"
                      id="service-<?php echo (int) $service['serviceID']; ?>"
                      data-name="<?php echo serviceText($service['serviceName']); ?>"
                      data-category="<?php echo serviceText($service['category']); ?>"
                      data-duration="<?php echo (int) $service['duration']; ?>"
                      data-price="<?php echo serviceText($service['price']); ?>"
-                     data-description="<?php echo serviceText($service['description']); ?>">
+                     data-description="<?php echo serviceText($service['description']); ?>"
+                     data-image="<?php echo serviceText($serviceImage); ?>">
                     <div class="service-card">
-                        <div class="service-image-placeholder"></div>
+                        <div class="service-image-placeholder">
+                            <?php if ($serviceImage != ''): ?>
+                                <img src="<?php echo serviceText($serviceImage); ?>" alt="<?php echo serviceText($service['serviceName']); ?>">
+                            <?php endif; ?>
+                        </div>
                         <div class="d-flex justify-content-between align-items-start gap-2">
                             <h4 class="service-title"><?php echo serviceText($service['serviceName']); ?></h4>
                             <span class="badge bg-light text-dark">#<?php echo (int) $service['serviceID']; ?></span>

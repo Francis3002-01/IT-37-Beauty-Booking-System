@@ -3,7 +3,10 @@
  <div class="modal-dialog modal-dialog-centered"><div class="modal-content p-3">
   <div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold" id="beauticianModalTitle">Add New Beautician</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
   <div class="modal-body">
-   <form id="beauticianForm" method="POST" action="backend%20logic/beauticians_backend.php" onsubmit="return validateBeauticianForm()">
+   <form id="beauticianForm" method="POST" enctype="multipart/form-data" action="backend%20logic/beauticians_backend.php" onsubmit="return validateBeauticianForm()">
+    <div class="mb-3"><label for="beauticianImage" class="form-label field-label">Profile Picture (Optional)</label>
+     <input type="file" class="form-control" id="beauticianImage" name="profileImage" accept="image/jpeg,image/png,image/webp" aria-describedby="beauticianImageHelp">
+     <div id="beauticianImageHelp" class="form-text">JPG, PNG or WebP, up to 2 MB.</div></div>
     <input type="hidden" id="editBeauticianId" name="beauticianID">
     <input type="hidden" id="beauticianAction" name="action" value="create">
     <div class="mb-3"><label for="beauticianFirstName" class="form-label field-label">First Name</label>
@@ -40,14 +43,17 @@
   <div class="modal-header"><h5 class="modal-title" id="viewBeauticianTitle">Beautician Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
   <div class="modal-body">
    <div class="row g-4">
-    <div class="col-md-6">
+    <div class="col-md-4">
+     <div class="beautician-view-photo"><img id="viewBeauticianImage" class="beautician-profile-image" alt="Beautician profile picture" hidden></div>
+    </div>
+    <div class="col-md-4">
    <p><strong>ID:</strong> <span id="viewBeauticianId"></span></p>
    <p><strong>First Name:</strong> <span id="viewBeauticianFirstName"></span></p>
    <p><strong>Last Name:</strong> <span id="viewBeauticianLastName"></span></p>
    <p><strong>Specialization:</strong> <span id="viewBeauticianType"></span></p>
    <p><strong>Employment Status:</strong> <span id="viewBeauticianStatus"></span></p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
    <p><strong>Address:</strong> <span id="viewBeauticianAddress"></span></p>
    <p><strong>Contact Number:</strong> <span id="viewBeauticianContactNo"></span></p>
    <p><strong>Date Joined:</strong> <span id="viewBeauticianDateJoined"></span></p>

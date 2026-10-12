@@ -32,6 +32,54 @@ function getFormValue(string $fieldName): string
     return trim($_POST[$fieldName]);
 }
 
+//check the actual image contents, then save a unique filename instead of the original name
+function uploadServiceImage()
+{
+    if (!isset($_FILES['serviceImage'])) return null;
+    $file = $_FILES['serviceImage'];
+    if (!isset($file['error']) || !is_int($file['error'])) {
+        throw new RuntimeException('Invalid service image upload.');
+    }
+    if ($file['error'] == UPLOAD_ERR_NO_FILE) return null;
+    if ($file['error'] != UPLOAD_ERR_OK) {
+        throw new RuntimeException('Service image upload failed. Choose an image up to 2 MB.');
+    }
+    if (!isset($file['tmp_name']) || !is_string($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        throw new RuntimeException('Invalid service image upload.');
+    }
+    if (filesize($file['tmp_name']) > 2 * 1024 * 1024) {
+        throw new RuntimeException('Service image must be no larger than 2 MB.');
+    }
+    $image = @getimagesize($file['tmp_name']);
+    $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
+    if (!$image || $image['mime'] != $mime) {
+        throw new RuntimeException('Choose a valid JPG, PNG or WebP image.');
+    }
+    if ($mime == 'image/jpeg') $extension = 'jpg';
+    else if ($mime == 'image/png') $extension = 'png';
+    else if ($mime == 'image/webp') $extension = 'webp';
+    else throw new RuntimeException('Choose a JPG, PNG or WebP image.');
+
+    $folder = __DIR__ . '/../uploads/services';
+    if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
+        throw new RuntimeException('Unable to create the service image folder.');
+    }
+    $path = 'uploads/services/' . bin2hex(random_bytes(16)) . '.' . $extension;
+    if (!move_uploaded_file($file['tmp_name'], __DIR__ . '/../' . $path)) {
+        throw new RuntimeException('Unable to save the service image.');
+    }
+    return $path;
+}
+
+//only remove files created by this upload handler
+function removeServiceImage($path)
+{
+    if (is_string($path) && preg_match('/^uploads\/services\/[a-f0-9]{32}\.(jpg|png|webp)$/', $path)) {
+        $file = __DIR__ . '/../' . $path;
+        if (is_file($file) && !unlink($file)) error_log('Unable to remove service image: ' . $path);
+    }
+}
+
 //ensure request method is POST, else return to services.php with error message
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
     returnToServices('error', 'Please submit the service form.');
@@ -67,6 +115,11 @@ if ($action == 'delete') {
             $conn->close();
             returnToServices('error', 'This service cannot be deleted because it is used in an appointment.');
         }
+        $statement = $conn->prepare('SELECT * FROM service WHERE serviceID = ?');
+        $statement->bind_param('i', $serviceID);
+        $statement->execute();
+        $record = $statement->get_result()->fetch_assoc();
+        $statement->close();
         $statement = $conn->prepare('DELETE FROM `service` WHERE serviceID = ?');
         $statement->bind_param('i', $serviceID);
         $statement->execute();
@@ -76,6 +129,7 @@ if ($action == 'delete') {
         if ($deleted == 0) {
             returnToServices('error', 'The selected record no longer exists.');
         }
+        removeServiceImage($record['serviceImage'] ?? null);
         returnToServices('success', 'Service deleted successfully.');
     } catch (mysqli_sql_exception $error) {
         if ($error->getCode() == 1451) {
@@ -121,6 +175,7 @@ if ($description == '' || mb_strlen($description) > 255) {
     returnToServices('error', 'Description is required and must contain at most 255 characters.');
 }
 
+$serviceImage = null;
 try {
     require_once __DIR__ . '/../config/database.php';
 
@@ -130,22 +185,23 @@ try {
 
     if ($action == 'create') { //insert new service into database
         $sql = 'INSERT INTO service
-            (serviceName, serviceCategory, duration, price, description)
-            VALUES (?, ?, ?, ?, ?)';
+            (serviceName, serviceCategory, duration, price, description, serviceImage)
+            VALUES (?, ?, ?, ?, ?, ?)';
         $statement = $conn->prepare($sql);
-        $statement->bind_param('ssiss', $serviceName, $category, $duration, $price, $description);
+        $serviceImage = uploadServiceImage();
+        $statement->bind_param('ssisss', $serviceName, $category, $duration, $price, $description, $serviceImage);
         $statement->execute();
         $statement->close();
         $conn->close();
 
         returnToServices('success', 'Service added successfully.');
     } else if ($action == 'edit') { //update existing service in database
-        $sql = 'SELECT serviceID FROM service WHERE serviceID = ?';
+        $sql = 'SELECT serviceID, serviceImage FROM service WHERE serviceID = ?';
         $statement = $conn->prepare($sql);
         $statement->bind_param('i', $serviceID);
         $statement->execute();
-        $statement->store_result();
-        $serviceExists = $statement->num_rows > 0;
+        $record = $statement->get_result()->fetch_assoc();
+        $serviceExists = $record !== null;
         $statement->close();
 
         if (!$serviceExists) {
@@ -155,17 +211,23 @@ try {
 
         $sql = 'UPDATE service
             SET serviceName = ?, serviceCategory = ?, duration = ?,
-                price = ?, description = ?
+                price = ?, description = ?, serviceImage = COALESCE(?, serviceImage)
             WHERE serviceID = ?';
         $statement = $conn->prepare($sql);
-        $statement->bind_param('ssissi', $serviceName, $category, $duration, $price, $description, $serviceID);
+        $serviceImage = uploadServiceImage();
+        $statement->bind_param('ssisssi', $serviceName, $category, $duration, $price, $description, $serviceImage, $serviceID);
         $statement->execute();
         $statement->close();
         $conn->close();
 
+        if ($serviceImage !== null) removeServiceImage($record['serviceImage']);
         returnToServices('success', 'Service updated successfully.');
     }
 } catch (mysqli_sql_exception $error) { //js in case bai
+    removeServiceImage($serviceImage);
     error_log('Service save failed: ' . $error->getMessage());
     returnToServices('error', 'Unable to save the service. Please try again.');
+} catch (RuntimeException $error) {
+    removeServiceImage($serviceImage);
+    returnToServices('error', $error->getMessage());
 }

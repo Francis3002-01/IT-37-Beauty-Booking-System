@@ -16,6 +16,7 @@ include 'includes/sidebar.php';
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <link rel="icon" type="image/svg+xml" href="favicon.svg">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title><?php echo $pageTitle ?? 'beautyReserve.'; ?></title>
@@ -33,7 +34,7 @@ include 'includes/sidebar.php';
 
         <!-- Top Search & Create Bar -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
-            <input type="text" id="searchInput" class="search-pill" placeholder="Search appointments..." oninput="filterAppointments()">
+            <input type="text" id="searchInput" class="search-pill" placeholder="Search Appointments..." oninput="filterAppointments()">
             <button class="btn btn-create" data-bs-toggle="modal" data-bs-target="#appointmentModal" onclick="openCreateModal()">Create New Appointment</button>
         </div>
 

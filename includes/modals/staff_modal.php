@@ -3,7 +3,10 @@
  <div class="modal-dialog modal-dialog-centered"><div class="modal-content p-3">
   <div class="modal-header border-0 pb-0"><h5 class="modal-title fw-bold" id="staffModalTitle">Add New Staff</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
   <div class="modal-body">
-   <form id="staffForm" method="POST" action="backend%20logic/staff_backend.php" onsubmit="return validateStaffForm()">
+   <form id="staffForm" method="POST" enctype="multipart/form-data" action="backend%20logic/staff_backend.php" onsubmit="return validateStaffForm()">
+    <div class="mb-3"><label for="staffImage" class="form-label field-label">Profile Picture (Optional)</label>
+     <input type="file" class="form-control" id="staffImage" name="profileImage" accept="image/jpeg,image/png,image/webp" aria-describedby="staffImageHelp">
+     <div id="staffImageHelp" class="form-text">JPG, PNG or WebP, up to 2 MB.</div></div>
     <input type="hidden" id="editStaffId" name="staffID">
     <input type="hidden" id="staffAction" name="action" value="create">
     <div class="mb-3"><label for="staffFirstName" class="form-label field-label">First Name</label>
@@ -36,14 +39,15 @@
   <div class="modal-header"><h5 class="modal-title" id="viewStaffTitle">Staff Details</h5><button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button></div>
   <div class="modal-body">
    <div class="row g-4">
-    <div class="col-md-6">
+    <div class="col-md-4"><div class="staff-view-photo"><img id="viewStaffImage" class="staff-profile-image" alt="Staff profile picture" hidden></div></div>
+    <div class="col-md-4">
    <p><strong>ID:</strong> <span id="viewStaffId"></span></p>
    <p><strong>First Name:</strong> <span id="viewStaffFirstName"></span></p>
    <p><strong>Last Name:</strong> <span id="viewStaffLastName"></span></p>
    <p><strong>Role:</strong> <span id="viewStaffType"></span></p>
    <p><strong>Employment Status:</strong> <span id="viewStaffStatus"></span></p>
     </div>
-    <div class="col-md-6">
+    <div class="col-md-4">
    <p><strong>Address:</strong> <span id="viewStaffAddress"></span></p>
    <p><strong>Contact Number:</strong> <span id="viewStaffContactNo"></span></p>
    <p><strong>Date Joined:</strong> <span id="viewStaffDateJoined"></span></p>

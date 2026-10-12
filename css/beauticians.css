@@ -157,6 +157,28 @@ body {
     margin-top: 2px;
 }
 
+.beautician-avatar-placeholder {
+    overflow: hidden;
+}
+.beautician-profile-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+.beautician-profile-image[hidden] {
+    display: none;
+}
+
+.beautician-view-photo {
+    border-radius: 6px;
+    width: 160px;
+    height: 160px;
+    max-width: 100%;
+    background-color: #d1d5db;
+    overflow: hidden;
+}
+
 .beautician-card .field-value {
     font-weight: 400;
 }
@@ -413,3 +435,4 @@ select.beautician-input {
     background-color: #484543;
     color: #ffffff;
 }
+
