@@ -44,7 +44,10 @@ function hideStaffFeedback()
     if (feedback) feedback.style.display = 'none';
 }
 
-setTimeout(hideStaffFeedback, 3000); //set the timeout to 3 seconds after notifying outcomes
+const staffFeedback = document.getElementById('staffFeedback');
+if (staffFeedback) {
+    setTimeout(hideStaffFeedback, Number(staffFeedback.getAttribute('data-duration')) || 3000);
+}
 
 //search and employment status filters work on the PHP-rendered cards
 function filterStaff()
