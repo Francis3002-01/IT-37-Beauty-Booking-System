@@ -228,7 +228,6 @@ if ($editing && bookingID($form['appointmentID'] ?? '')) {
                                 formnovalidate
                                 class="btn btn-light rounded-pill px-4 mb-3"
                             >
-                                Check Availability
                             </button>
                             <label class="form-label d-block" for="appointmentBeautician"
                                 >Assign Beautician</label
