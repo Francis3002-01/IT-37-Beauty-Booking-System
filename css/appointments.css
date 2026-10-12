@@ -5,11 +5,17 @@
  * and dashboard responsive styling.
  */
 
- 
 /* General Styling */
 body {
     background-color: #f4f5f7;
-    font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-family:
+        system-ui,
+        -apple-system,
+        'Segoe UI',
+        Roboto,
+        Helvetica,
+        Arial,
+        sans-serif;
     color: #212529;
 }
 
@@ -52,7 +58,8 @@ body {
     margin-bottom: 4px;
     transition: all 0.2s ease;
 }
-.nav-link:hover, .nav-link.active {
+.nav-link:hover,
+.nav-link.active {
     background-color: #f1f3f5;
     color: #000000;
 }
@@ -105,10 +112,12 @@ body {
     font-size: 0.875rem;
     color: #495057;
     font-weight: 500;
+    transition: all 0.2s ease;
 }
 .filter-pill.active {
     background-color: #dee2e6;
     color: #212529;
+    font-weight: 600;
 }
 
 /* Appointment Item Cards */
@@ -118,7 +127,9 @@ body {
     border-radius: 16px;
     padding: 24px;
     margin-bottom: 20px;
-    transition: transform 0.2s ease, border-color 0.2s ease;
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease;
 }
 .appointment-item-card:hover {
     border-color: #ced4da;
@@ -186,4 +197,14 @@ body {
 .modal-content {
     border-radius: 20px;
     border: none;
+}
+
+.filter-dropdown {
+    padding-right: 36px;
+    cursor: pointer;
+}
+
+.filter-pill:hover {
+    background-color: #e9ecef;
+    color: #212529;
 }
