@@ -18,7 +18,7 @@ $status = $_SESSION['client_status'] ?? 'error';
 unset($_SESSION['client_message'], $_SESSION['client_status']);
 
 //retrieve client records from database
-$result = $conn->query('SELECT * FROM client ORDER BY clientID');
+$result = $conn->query('SELECT clientID, firstName, lastName, address, contactNo, (imageData IS NOT NULL) AS hasImage FROM client ORDER BY clientID');
 $clients = [];
 while ($client = $result->fetch_assoc()) {
     $clients[] = $client;
@@ -63,9 +63,8 @@ function clientText($value)
         <div class="d-flex flex-column gap-3" id="clientsList">
             <?php foreach ($clients as $client): ?>
                 <?php
-                $profileImage = $client['profileImage'] ?? '';
-                if (!preg_match('/^uploads\/clients\/[a-f0-9]{32}\.(jpg|png|webp)$/', $profileImage)
-                    || !is_file(__DIR__ . '/' . $profileImage)) $profileImage = '';
+                $profileImage = $client['hasImage']
+                    ? 'client-image.php?id=' . (int) $client['clientID'] : '';
                 ?>
                 <div class="client-row-card client-record" id="client-<?php echo (int) $client['clientID']; ?>"
                      data-id="<?php echo (int) $client['clientID']; ?>"

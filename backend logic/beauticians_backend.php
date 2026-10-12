@@ -31,7 +31,7 @@ function getBeauticianFormValue($fieldName)
     return trim($_POST[$fieldName]);
 }
 
-//check the actual image contents, then save a unique filename instead of the original name
+//check the image contents and read bytes for MySQL BLOB storage
 function uploadBeauticianImage()
 {
     if (!isset($_FILES['profileImage'])) return null;
@@ -54,29 +54,12 @@ function uploadBeauticianImage()
     if (!$image || $image['mime'] != $mime) {
         throw new RuntimeException('Choose a valid JPG, PNG or WebP image.');
     }
-    if ($mime == 'image/jpeg') $extension = 'jpg';
-    else if ($mime == 'image/png') $extension = 'png';
-    else if ($mime == 'image/webp') $extension = 'webp';
-    else throw new RuntimeException('Choose a JPG, PNG or WebP image.');
-
-    $folder = __DIR__ . '/../uploads/beauticians';
-    if (!is_dir($folder) && !mkdir($folder, 0755, true)) {
-        throw new RuntimeException('Unable to create the profile picture folder.');
+    if ($mime != 'image/jpeg' && $mime != 'image/png' && $mime != 'image/webp') {
+        throw new RuntimeException('Choose a JPG, PNG or WebP image.');
     }
-    $path = 'uploads/beauticians/' . bin2hex(random_bytes(16)) . '.' . $extension;
-    if (!move_uploaded_file($file['tmp_name'], __DIR__ . '/../' . $path)) {
-        throw new RuntimeException('Unable to save the profile picture.');
-    }
-    return $path;
-}
-
-//only remove files created by this upload handler
-function removeBeauticianImage($path)
-{
-    if (is_string($path) && preg_match('/^uploads\/beauticians\/[a-f0-9]{32}\.(jpg|png|webp)$/', $path)) {
-        $file = __DIR__ . '/../' . $path;
-        if (is_file($file) && !unlink($file)) error_log('Unable to remove beautician image: ' . $path);
-    }
+    $data = file_get_contents($file['tmp_name']);
+    if ($data === false) throw new RuntimeException('Unable to read the profile picture.');
+    return ['data' => $data, 'mime' => $mime];
 }
 
 //ensure request method is POST, else return to beauticians.php with error message
@@ -124,11 +107,6 @@ if ($action == 'delete') {
             $conn->close();
             returnToBeauticians('error', 'This beautician cannot be deleted because they have availability schedules. Remove unused schedules first.');
         }
-        $statement = $conn->prepare('SELECT * FROM beauticians WHERE beauticianID = ?');
-        $statement->bind_param('i', $beauticianID);
-        $statement->execute();
-        $record = $statement->get_result()->fetch_assoc();
-        $statement->close();
         $statement = $conn->prepare('DELETE FROM `beauticians` WHERE beauticianID = ?');
         $statement->bind_param('i', $beauticianID);
         $statement->execute();
@@ -138,7 +116,6 @@ if ($action == 'delete') {
         if ($deleted == 0) {
             returnToBeauticians('error', 'The selected record no longer exists.');
         }
-        removeBeauticianImage($record['profileImage'] ?? null);
         returnToBeauticians('success', 'Beautician deleted successfully.');
     } catch (mysqli_sql_exception $error) {
         if ($error->getCode() == 1451) {
@@ -227,7 +204,8 @@ if (!ctype_digit($contactNo) || strlen($contactNo) != 11) {
     returnToBeauticians('error', 'Contact number must contain exactly 11 digits.');
 }
 
-$profileImage = null;
+$imageData = null;
+$imageMime = null;
 try {
     require_once __DIR__ . '/../config/database.php';
 
@@ -256,16 +234,18 @@ try {
     }
 
     if ($action == 'create') { //insert new beautician into database
-        $sql = 'INSERT INTO beauticians (beauticianType, lastName, firstName, address, contactNo, employmentStatus, dateJoined, dateSeparated, profileImage) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)';
+        $sql = 'INSERT INTO beauticians (beauticianType, lastName, firstName, address, contactNo, employmentStatus, dateJoined, dateSeparated, imageData, imageMime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
         $statement = $conn->prepare($sql);
-        $profileImage = uploadBeauticianImage();
-        $statement->bind_param('sssssssss', $beauticianType, $lastName, $firstName, $address, $contactNo, $employmentStatus, $dateJoined, $dateSeparated, $profileImage);
+        $image = uploadBeauticianImage();
+        $imageData = $image['data'] ?? null;
+        $imageMime = $image['mime'] ?? null;
+        $statement->bind_param('ssssssssss', $beauticianType, $lastName, $firstName, $address, $contactNo, $employmentStatus, $dateJoined, $dateSeparated, $imageData, $imageMime);
         $statement->execute();
         $statement->close();
         $conn->close();
         returnToBeauticians('success', 'Beautician added successfully.');
     } else if ($action == 'edit') { //update existing beautician in database
-        $statement = $conn->prepare('SELECT beauticianID, profileImage FROM beauticians WHERE beauticianID = ?');
+        $statement = $conn->prepare('SELECT beauticianID FROM beauticians WHERE beauticianID = ?');
         $statement->bind_param('i', $beauticianID);
         $statement->execute();
         $record = $statement->get_result()->fetch_assoc();
@@ -275,21 +255,20 @@ try {
             $conn->close();
             returnToBeauticians('error', 'The selected beautician no longer exists.');
         }
-        $sql = 'UPDATE beauticians SET beauticianType = ?, lastName = ?, firstName = ?, address = ?, contactNo = ?, employmentStatus = ?, dateJoined = ?, dateSeparated = ?, profileImage = COALESCE(?, profileImage) WHERE beauticianID = ?';
+        $sql = 'UPDATE beauticians SET beauticianType = ?, lastName = ?, firstName = ?, address = ?, contactNo = ?, employmentStatus = ?, dateJoined = ?, dateSeparated = ?, imageData = COALESCE(?, imageData), imageMime = COALESCE(?, imageMime) WHERE beauticianID = ?';
         $statement = $conn->prepare($sql);
-        $profileImage = uploadBeauticianImage();
-        $statement->bind_param('sssssssssi', $beauticianType, $lastName, $firstName, $address, $contactNo, $employmentStatus, $dateJoined, $dateSeparated, $profileImage, $beauticianID);
+        $image = uploadBeauticianImage();
+        $imageData = $image['data'] ?? null;
+        $imageMime = $image['mime'] ?? null;
+        $statement->bind_param('ssssssssssi', $beauticianType, $lastName, $firstName, $address, $contactNo, $employmentStatus, $dateJoined, $dateSeparated, $imageData, $imageMime, $beauticianID);
         $statement->execute();
         $statement->close();
-        if ($profileImage !== null) removeBeauticianImage($record['profileImage']);
         $conn->close();
         returnToBeauticians('success', 'Beautician updated successfully.');
     }
 } catch (mysqli_sql_exception $error) { //js in case bai
-    removeBeauticianImage($profileImage);
     error_log('Beautician save failed: ' . $error->getMessage());
     returnToBeauticians('error', 'Unable to save the beautician. Please try again.');
 } catch (RuntimeException $error) {
-    removeBeauticianImage($profileImage);
     returnToBeauticians('error', $error->getMessage());
 }

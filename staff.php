@@ -18,7 +18,7 @@ $status = $_SESSION['staff_status'] ?? 'error';
 unset($_SESSION['staff_message'], $_SESSION['staff_status']);
 
 //retrieve staff records from database
-$result = $conn->query('SELECT * FROM staff ORDER BY staffID');
+$result = $conn->query('SELECT staffID, staffType, firstName, lastName, address, contactNo, employmentStatus, dateJoined, dateSeparated, (imageData IS NOT NULL) AS hasImage FROM staff ORDER BY staffID');
 $staffRecords = [];
 while ($staff = $result->fetch_assoc()) {
     $staffRecords[] = $staff;
@@ -66,9 +66,8 @@ function staffText($value)
         <div class="row" id="staffGrid">
             <?php foreach ($staffRecords as $staff): ?>
                 <?php
-                $profileImage = $staff['profileImage'] ?? '';
-                if (!preg_match('/^uploads\/staff\/[a-f0-9]{32}\.(jpg|png|webp)$/', $profileImage)
-                    || !is_file(__DIR__ . '/' . $profileImage)) $profileImage = '';
+                $profileImage = $staff['hasImage']
+                    ? 'staff-image.php?id=' . (int) $staff['staffID'] : '';
                 ?>
                 <div class="col-md-6 col-lg-4 mb-4 staff-record" id="staff-<?php echo (int) $staff['staffID']; ?>"
                      data-first-name="<?php echo staffText($staff['firstName']); ?>"

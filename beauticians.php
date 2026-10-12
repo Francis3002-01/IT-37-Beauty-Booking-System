@@ -18,7 +18,7 @@ $status = $_SESSION['beautician_status'] ?? 'error';
 unset($_SESSION['beautician_message'], $_SESSION['beautician_status']);
 
 //retrieve beautician records from database
-$result = $conn->query('SELECT * FROM beauticians ORDER BY beauticianID');
+$result = $conn->query('SELECT beauticianID, beauticianType, lastName, firstName, address, contactNo, employmentStatus, dateJoined, dateSeparated, (imageData IS NOT NULL) AS hasImage FROM beauticians ORDER BY beauticianID');
 $beauticians = [];
 while ($beautician = $result->fetch_assoc()) {
     $beauticians[] = $beautician;
@@ -75,11 +75,8 @@ function beauticianText($value)
         <div class="row" id="beauticiansGrid">
             <?php foreach ($beauticians as $beautician): ?>
                 <?php
-                $profileImage = $beautician['profileImage'] ?? '';
-                if (!preg_match('/^uploads\/beauticians\/[a-f0-9]{32}\.(jpg|png|webp)$/', $profileImage)
-                    || !is_file(__DIR__ . '/' . $profileImage)) {
-                    $profileImage = '';
-                }
+                $profileImage = $beautician['hasImage']
+                    ? 'beautician-image.php?id=' . (int) $beautician['beauticianID'] : '';
                 ?>
                 <div class="col-md-6 col-lg-4 mb-4 beautician-record" id="beautician-<?php echo (int) $beautician['beauticianID']; ?>"
                      data-first-name="<?php echo beauticianText($beautician['firstName']); ?>"
