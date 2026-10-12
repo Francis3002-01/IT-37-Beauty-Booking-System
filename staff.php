@@ -18,14 +18,11 @@ $status = $_SESSION['staff_status'] ?? 'error';
 unset($_SESSION['staff_message'], $_SESSION['staff_status']);
 
 //retrieve staff records from database
-$sql = "SELECT staff.*, `user`.userName, (staff.imageData IS NOT NULL) AS hasImage 
+$sql = "SELECT staff.staffID, staff.staffType, staff.firstName, staff.lastName, staff.address, staff.contactNo, staff.employmentStatus, staff.dateJoined, staff.dateSeparated, `user`.userName, (staff.imageData IS NOT NULL) AS hasImage 
         FROM staff 
         LEFT JOIN `user` ON staff.staffID = `user`.staffID";
 $result = $conn->query($sql);
 $staffRecords =$result->fetch_all(MYSQLI_ASSOC);
-while ($staff = $result->fetch_assoc()) {
-    $staffRecords[] = $staff;
-}
 
 $result->free();
 $conn->close();
@@ -34,7 +31,7 @@ function staffText($value)
 {
     return htmlspecialchars((string) $value, ENT_QUOTES); //type errorr guard. htmlspecialchars convert, en_quotes converts '"
 }
-$isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin');
+$canManageStaff = in_array(strtolower($_SESSION['user_role'] ?? ''), ['admin', 'staff'], true);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -63,7 +60,7 @@ $isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin')
     <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
         <input type="text" id="searchInput" class="search-pill" placeholder="Search Staff..." oninput="filterStaff()">
         
-        <?php if ($isAdmin): ?>
+        <?php if ($canManageStaff): ?>
             <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Staff</button>
         <?php endif; ?>
     </div>
@@ -86,6 +83,7 @@ $isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin')
                     ? 'staff-image.php?id=' . (int) $staff['staffID'] : '';
                 ?>
                 <div class="col-md-6 col-lg-4 mb-4 staff-record" id="staff-<?php echo (int) $staff['staffID']; ?>"
+                     data-username="<?php echo staffText($staff['userName'] ?? ''); ?>"
                      data-first-name="<?php echo staffText($staff['firstName']); ?>"
                      data-last-name="<?php echo staffText($staff['lastName']); ?>"
                      data-type="<?php echo staffText($staff['staffType']); ?>"
@@ -126,16 +124,12 @@ $isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin')
                             <span class="staff-employment-status <?php echo $statusClass; ?>"><?php echo staffText($staff['employmentStatus']); ?></span>
                         </div>
                         
-                        <!-- Actions Row: Only visible to Admins -->
-                        <?php if ($isAdmin): ?>
+                        <!-- Actions Row: Available to logged-in Admin and Staff users -->
+                        <?php if ($canManageStaff): ?>
                             <div class="border-top pt-3 d-flex justify-content-end gap-2 flex-wrap">
                                 <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewStaff(<?php echo (int) $staff['staffID']; ?>)">VIEW</button>
-                                <?php 
-                                    $staffEditData = $staff;
-                                    unset($staffEditData['imageData']); // Remove heavy binary data so JSON encoding never breaks
-                                ?>
-                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick='editStaff(<?php echo htmlspecialchars(json_encode($staffEditData), ENT_QUOTES, 'UTF-8'); ?>)'>EDIT</button>
-                                <form method="POST" action="backend%20logic/staff_backend.php" onsubmit="return confirmStaffDelete()" class="d-inline">
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editStaff(<?php echo (int) $staff['staffID']; ?>)">EDIT</button>
+                                <form method="POST" action="backend%20logic/staff_backend.php"  class="d-inline">
                                     <input type="hidden" name="action" value="delete"><input type="hidden" name="staffID" value="<?php echo (int) $staff['staffID']; ?>">
                                     <button type="button" class="btn btn-sm btn-outline-danger px-3 rounded-pill" onclick="confirmStaffDelete(<?php echo (int) $staff['staffID']; ?>)">DELETE</button>
                                 </form>
