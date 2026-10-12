@@ -8,7 +8,6 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
  * Acts as the visual shell. It relies on PHP includes for layout components (Header, Sidebar, Modals, Footer) and JavaScript for dynamic content rendering.
 */
 
-
 $pageTitle = "Services - beautyReserve";
 
 //config db
@@ -32,6 +31,7 @@ function serviceText($value)
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+$isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin');
 ?>
 
 <!DOCTYPE html>
@@ -62,7 +62,10 @@ function serviceText($value)
         <!-- Top Search & Create Bar -->
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <input type="text" id="searchInput" class="search-pill" placeholder="Search Services..." oninput="filterServices()">
-           <button class="btn btn-create" onclick="openCreateModal()">Add New Service</button>
+            
+            <?php if ($isAdmin): ?>
+                <button class="btn btn-create" onclick="openCreateModal()">Add New Service</button>
+            <?php endif; ?>
         </div>
 
         <!-- Filter Pills -->
@@ -109,12 +112,15 @@ function serviceText($value)
                         </div>
                         <div class="service-card-footer">
                             <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewService(<?php echo (int) $service['serviceID']; ?>)">VIEW</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editService(<?php echo (int) $service['serviceID']; ?>)">EDIT</button>
-                            <form method="POST" action="backend%20logic/services_backend.php" onsubmit="return confirmServiceDelete()" class="d-inline">
-                                <input type="hidden" name="action" value="delete">
-                                <input type="hidden" name="serviceID" value="<?php echo (int) $service['serviceID']; ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">DELETE</button>
-                            </form>
+                            
+                            <?php if ($isAdmin): ?>
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editService(<?php echo (int) $service['serviceID']; ?>)">EDIT</button>
+                                <form method="POST" action="backend%20logic/services_backend.php" onsubmit="return confirmServiceDelete()" class="d-inline">
+                                    <input type="hidden" name="action" value="delete">
+                                    <input type="hidden" name="serviceID" value="<?php echo (int) $service['serviceID']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">DELETE</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>

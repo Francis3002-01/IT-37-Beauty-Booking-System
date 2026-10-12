@@ -8,13 +8,13 @@
  */
 
 //function to handle outcomes (errors and success messages) and return to staff.php
-function returnToStaff($status, $message)
+function returnToStaff($status,$message)
 {
     if (session_status() !== PHP_SESSION_ACTIVE) {
         session_start();
     }
-    $_SESSION['staff_status'] = $status;
-    $_SESSION['staff_message'] = $message;
+    $_SESSION['staff_status'] =$status;
+    $_SESSION['staff_message'] =$message;
     header('Location: ../staff.php', true, 303);
     exit;
 }
@@ -35,31 +35,28 @@ function getStaffFormValue($fieldName)
 function uploadStaffImage()
 {
     if (!isset($_FILES['profileImage'])) return null;
-    $file = $_FILES['profileImage'];
-    if (!isset($file['error']) || !is_int($file['error'])) {
+    $file =$_FILES['profileImage'];
+    if (!isset($file['error']) or !is_int($file['error'])) {
         throw new RuntimeException('Invalid profile picture upload.');
     }
     if ($file['error'] == UPLOAD_ERR_NO_FILE) return null;
     if ($file['error'] != UPLOAD_ERR_OK) {
         throw new RuntimeException('Profile picture upload failed. Choose an image up to 2 MB.');
     }
-    if (!isset($file['tmp_name']) || !is_string($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+    if (!isset($file['tmp_name']) or !is_string($file['tmp_name']) or !is_uploaded_file($file['tmp_name'])) {
         throw new RuntimeException('Invalid profile picture upload.');
-    }
-    if (filesize($file['tmp_name']) > 2 * 1024 * 1024) {
-        throw new RuntimeException('Profile picture must be no larger than 2 MB.');
     }
     $image = @getimagesize($file['tmp_name']);
     $mime = (new finfo(FILEINFO_MIME_TYPE))->file($file['tmp_name']);
-    if (!$image || $image['mime'] != $mime) {
+    if (!$image or $image['mime'] !=$mime) {
         throw new RuntimeException('Choose a valid JPG, PNG or WebP image.');
     }
-    if ($mime != 'image/jpeg' && $mime != 'image/png' && $mime != 'image/webp') {
+    if ($mime != 'image/jpeg' and $mime != 'image/png' and$mime != 'image/webp') {
         throw new RuntimeException('Choose a JPG, PNG or WebP image.');
     }
     $data = file_get_contents($file['tmp_name']);
     if ($data === false) throw new RuntimeException('Unable to read the profile picture.');
-    return ['data' => $data, 'mime' => $mime];
+    return ['data' => $data, 'mime' =>$mime];
 }
 
 //ensure request method is POST, else return to staff.php with error message
@@ -69,7 +66,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
 
 //guarantee that actions can only be create, edit, or delete. If not, return to staff.php with error message
 $action = getStaffFormValue('action');
-if ($action != 'create' && $action != 'edit' && $action != 'delete') {
+if ($action != 'create' and $action != 'edit' and$action != 'delete') {
     returnToStaff('error', 'Invalid staff action.');
 }
 
@@ -77,39 +74,61 @@ if ($action != 'create' && $action != 'edit' && $action != 'delete') {
 $staffID = getStaffFormValue('staffID');
 
 //for editing and deleting, ensure staffID is a valid positive integer within the range of a 32-bit signed integer. If not, return to staff.php with error message
-if ($action == 'edit' || $action == 'delete') {
-    if (!ctype_digit($staffID) || $staffID < 1 || $staffID > 2147483647) {
+if ($action == 'edit' or$action == 'delete') {
+    if (!ctype_digit($staffID) or $staffID < 1 or$staffID > 2147483647) {
         returnToStaff('error', 'Invalid staff ID.');
     }
 }
 
-//staff links to appointments through user accounts, so check the account first
+//staff links to user accounts, so delete both safely using a transaction
 if ($action == 'delete') {
     try {
         require_once __DIR__ . '/../config/database.php';
-        $statement = $conn->prepare('SELECT userID FROM `user` WHERE staffID = ? LIMIT 1');
-        $statement->bind_param('i', $staffID);
-        $statement->execute();
-        $statement->store_result();
-        $used = $statement->num_rows > 0;
-        $statement->close();
-        if ($used) {
-            $conn->close();
-            returnToStaff('error', 'This staff member cannot be deleted because they have a user account. Set them to Inactive and disable the account instead.');
+        
+        // 1. Optional check: Prevent deleting Active staff members directly
+        $checkStmt =$conn->prepare('SELECT employmentStatus FROM staff WHERE staffID = ? LIMIT 1');
+        $checkStmt->bind_param('i',$staffID);
+        $checkStmt->execute();$checkStmt->store_result();
+        if ($checkStmt->num_rows > 0) {
+            $checkStmt->bind_result($employmentStatus);
+            $checkStmt->fetch();$checkStmt->close();
+
+            if ($employmentStatus === 'Active') {$conn->close();
+                returnToStaff('error', 'Active staff members cannot be deleted. Please set them to Inactive first if needed.');
+            }
+        } else {
+            $checkStmt->close();$conn->close();
+            returnToStaff('error', 'The selected record no longer exists.');
         }
-        $statement = $conn->prepare('DELETE FROM `staff` WHERE staffID = ?');
-        $statement->bind_param('i', $staffID);
-        $statement->execute();
-        $deleted = $statement->affected_rows;
+
+        // 2. Begin transaction for safe deletion of user account and staff record
+        $conn->begin_transaction();
+
+        // Delete the linked user account first
+        $statement =$conn->prepare('DELETE FROM `user` WHERE staffID = ?');
+        $statement->bind_param('i',$staffID);
+        $statement->execute();$statement->close();
+
+        // Delete the staff member
+        $statement =$conn->prepare('DELETE FROM `staff` WHERE staffID = ?');
+        $statement->bind_param('i', $staffID);$statement->execute();
+        $deleted =$statement->affected_rows;
         $statement->close();
-        $conn->close();
+
+        $conn->commit();$conn->close();
+
         if ($deleted == 0) {
             returnToStaff('error', 'The selected record no longer exists.');
         }
-        returnToStaff('success', 'Staff member deleted successfully.');
+        returnToStaff('success', 'Staff member and their user account deleted successfully.');
+        
     } catch (mysqli_sql_exception $error) {
+        if (isset($conn) and$conn instanceof mysqli) {
+            @$conn->rollback();
+        }
+        // Foreign key constraint error code 1451 (referenced by appointments/transactions)
         if ($error->getCode() == 1451) {
-            returnToStaff('error', 'This record cannot be deleted because it is referenced by another record.');
+            returnToStaff('error', 'This record cannot be deleted because it is referenced by past appointments or transactions.');
         }
         error_log('Staff member deletion failed: ' . $error->getMessage());
         returnToStaff('error', 'Unable to delete the record. Please try again.');
@@ -118,77 +137,69 @@ if ($action == 'delete') {
 
 //store form values in variables for validation to prep for insertion, edits, and deletion.
 $firstName = getStaffFormValue('firstName');
-$lastName = getStaffFormValue('lastName');
-$address = getStaffFormValue('address');
-$contactNo = getStaffFormValue('contactNo');
-$staffType = getStaffFormValue('staffType');
-$employmentStatus = getStaffFormValue('employmentStatus');
-$dateJoined = getStaffFormValue('dateJoined');
-$dateSeparated = getStaffFormValue('dateSeparated');
+$lastName = getStaffFormValue('lastName');$address = getStaffFormValue('address');
+$contactNo = getStaffFormValue('contactNo');$staffType = getStaffFormValue('staffType');
+$employmentStatus = getStaffFormValue('employmentStatus');$dateJoined = getStaffFormValue('dateJoined');
+$dateSeparated = getStaffFormValue('dateSeparated');$username = getStaffFormValue('username');
 
-//check role and employment status before saving.  god we should really array this
+//check role and employment status before saving.
 if ($staffType != 'Receptionist') {
     returnToStaff('error', 'Select a valid role.');
 }
-if ($employmentStatus != 'Active' && $employmentStatus != 'On Leave' && $employmentStatus != 'Inactive') {
+if ($employmentStatus != 'Active' and $employmentStatus != 'On Leave' and$employmentStatus != 'Inactive') {
     returnToStaff('error', 'Select a valid employment status.');
 }
 
 //check actual calendar dates, not only their text format
 function validStaffDate($value)
 {
-    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/', $value)) return false;
-    $parts = explode('-', $value);
-    return $parts[0] >= 1000 && checkdate((int) $parts[1], (int) $parts[2], (int) $parts[0]);
+    if (!preg_match('/^[0-9]{4}-[0-9]{2}-[0-9]{2}$/',$value)) return false;
+    $parts = explode('-',$value);
+    return $parts[0] >= 1000 and checkdate((int)$parts[1], (int)$parts[2], (int)$parts[0]);
 }
 if (!validStaffDate($dateJoined)) {
     returnToStaff('error', 'Enter a valid date joined.');
 }
-if ($employmentStatus == 'Inactive' && $dateSeparated == '') {
+if ($employmentStatus == 'Inactive' and$dateSeparated == '') {
     returnToStaff('error', 'Date separated is required when employment status is Inactive.');
 }
-//active and on leave staff have not separated, so clear the date
-if ($employmentStatus == 'Active' || $employmentStatus == 'On Leave') {
-    $dateSeparated = '';
+if ($employmentStatus == 'Active' or $employmentStatus == 'On Leave') {$dateSeparated = '';
 }
 if ($dateSeparated != '') {
-    if (!validStaffDate($dateSeparated) || $dateSeparated < $dateJoined) {
+    if (!validStaffDate($dateSeparated) or $dateSeparated <$dateJoined) {
         returnToStaff('error', 'Date separated must be a valid date on or after date joined.');
     }
 }
-//an empty optional date is stored as SQL NULL
-if ($dateSeparated == '') $dateSeparated = null;
-
+if ($dateSeparated == '')$dateSeparated = null;
 
 //name cannot be empty
-if ($firstName == '' || mb_strlen($firstName) > 50) {
+if ($firstName == '' or mb_strlen($firstName) > 50) {
     returnToStaff('error', 'First name must contain 1 to 50 characters.');
 }
-if ($lastName == '' || mb_strlen($lastName) > 50) {
+if ($lastName == '' or mb_strlen($lastName) > 50) {
     returnToStaff('error', 'Last name must contain 1 to 50 characters.');
 }
 
-//allow accented letters, spaces, apostrophes, periods and hyphens lngc
-if (!preg_match('/\p{L}/u', $firstName)
-    || !preg_match("/^[\p{L}\p{M} .’'\-]+$/u", $firstName)) {
-    returnToStaff('error', 'First name must contain letters. It may use spaces, apostrophes, periods or hyphens.');
+// Username validation for both create and edit
+if ($username == '' or mb_strlen($username) > 50) {
+    returnToStaff('error', 'Username is required and must be at most 50 characters.');
 }
-if (!preg_match('/\p{L}/u', $lastName)
-    || !preg_match("/^[\p{L}\p{M} .’'\-]+$/u", $lastName)) {
-    returnToStaff('error', 'Last name must contain letters. It may use spaces, apostrophes, periods or hyphens.');
+
+//allow accented letters, spaces, apostrophes, periods and hyphens
+if (!preg_match('/\p{L}/u', $firstName) or !preg_match("/^[\p{L}\p{M} .’'\-]+$/u", $firstName)) {
+    returnToStaff('error', 'First name must contain letters.');
+}
+if (!preg_match('/\p{L}/u', $lastName) or !preg_match("/^[\p{L}\p{M} .’'\-]+$/u", $lastName)) {
+    returnToStaff('error', 'Last name must contain letters.');
 }
 
 //address cannot be empty and allow symbols
-if ($address == '' || mb_strlen($address) > 255) {
+if ($address == '' or mb_strlen($address) > 255) {
     returnToStaff('error', 'Address is required and must contain at most 255 characters.');
-}
-if (!preg_match('/\p{L}/u', $address)
-    || !preg_match("/^[\p{L}\p{M}\p{N} .,\r\n’'\-\/#():]+$/u", $address)) {
-    returnToStaff('error', 'Address must contain letters and use ordinary address text, numbers and punctuation.');
 }
 
 //contactno cannot be empty and must be exactly 11 digits
-if (!ctype_digit($contactNo) || strlen($contactNo) != 11) {
+if (!ctype_digit($contactNo) or strlen($contactNo) != 11) {
     returnToStaff('error', 'Contact number must contain exactly 11 digits.');
 }
 
@@ -197,66 +208,120 @@ $imageMime = null;
 try {
     require_once __DIR__ . '/../config/database.php';
 
-    if (!isset($conn) || !($conn instanceof mysqli)) { //check if $conn is active
+    if (!isset($conn) or !($conn instanceof mysqli)) {
         returnToStaff('error', 'The database connection is unavailable.');
     }
 
-    //check if duplicate full name exists in db. gets a copy of the staffID to compare with the current staffID. If it exists, return to staff.php with error message
+    // Check duplicate full name in staff table
     $excludedID = 0;
     if ($action == 'edit') {
-        $excludedID = (int) $staffID;
+        $excludedID = (int)$staffID;
     }
-    $sql = 'SELECT staffID FROM staff
-        WHERE TRIM(firstName) = ? AND TRIM(lastName) = ? AND staffID != ?
-        LIMIT 1';
+    $sql = 'SELECT staffID FROM staff WHERE TRIM(firstName) = ? AND TRIM(lastName) = ? AND staffID != ? LIMIT 1';
     $statement = $conn->prepare($sql);
-    $statement->bind_param('ssi', $firstName, $lastName, $excludedID);
-    $statement->execute();
-    $statement->store_result();
-    $duplicateName = $statement->num_rows > 0;
+    $statement->bind_param('ssi',$firstName, $lastName,$excludedID);
+    $statement->execute();$statement->store_result();
+    $duplicateName =$statement->num_rows > 0;
     $statement->close();
 
-    if ($duplicateName) {
-        $conn->close();
+    if ($duplicateName) {$conn->close();
         returnToStaff('error', 'A staff member with the same first and last name already exists.');
     }
 
-    if ($action == 'create') { //insert new staff into database
+    if ($action == 'create') { // Insert new staff and corresponding user account
+        // Check if username already exists in `user` table
+        $checkUser =$conn->prepare('SELECT userID FROM `user` WHERE userName = ? LIMIT 1');
+        $checkUser->bind_param('s',$username);
+        $checkUser->execute();$checkUser->store_result();
+        $usernameExists =$checkUser->num_rows > 0;
+        $checkUser->close();
+
+        if ($usernameExists) {$conn->close();
+            returnToStaff('error', 'This username is already taken. Please choose another one.');
+        }
+
+        // Begin transaction cleanly
+        $conn->begin_transaction();
+
+        // 1. Insert Staff
         $sql = 'INSERT INTO staff (staffType, lastName, firstName, address, contactNo, employmentStatus, dateJoined, dateSeparated, imageData, imageMime) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-        $statement = $conn->prepare($sql);
-        $image = uploadStaffImage();
-        $imageData = $image['data'] ?? null;
-        $imageMime = $image['mime'] ?? null;
-        $statement->bind_param('ssssssssss', $staffType, $lastName, $firstName, $address, $contactNo, $employmentStatus, $dateJoined, $dateSeparated, $imageData, $imageMime);
-        $statement->execute();
+        $statement =$conn->prepare($sql);$image = uploadStaffImage();
+        $imageData =$image['data'] ?? null;
+        $imageMime =$image['mime'] ?? null;
+        $statement->bind_param('ssssssssss',$staffType, $lastName,$firstName, $address,$contactNo, $employmentStatus,$dateJoined, $dateSeparated,$imageData, $imageMime);$statement->execute();
+        $newStaffId =$conn->insert_id;
         $statement->close();
-        $conn->close();
-        returnToStaff('success', 'Staff added successfully.');
-    } else if ($action == 'edit') { //update existing staff in database
-        $statement = $conn->prepare('SELECT staffID FROM staff WHERE staffID = ?');
-        $statement->bind_param('i', $staffID);
-        $statement->execute();
-        $record = $statement->get_result()->fetch_assoc();
-        $staffExists = $record !== null;
+
+        // 2. Generate secure random alphanumeric password (8 characters)
+        $chars = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';$rawPassword = '';
+        $maxIndex = strlen($chars) - 1;
+        for ($i = 0; $i < 8; $i++) {$rawPassword .= $chars[random_int(0,$maxIndex)];
+        }
+        
+        $passwordHash = password_hash($rawPassword, PASSWORD_DEFAULT);
+        $role = 'Receptionist';$accountStatus = 'Active';
+
+        // 3. Insert User Account linked to staffID using the exact typed username
+        $userSql = 'INSERT INTO `user` (staffID, userName, passwordHash, role, accountStatus) VALUES (?, ?, ?, ?, ?)';
+        $userStmt = $conn->prepare($userSql);
+        $userStmt->bind_param('issss',$newStaffId, $username,$passwordHash, $role,$accountStatus);
+        $userStmt->execute();$userStmt->close();
+
+        $conn->commit();$conn->close();
+
+        // Success message displaying the generated readable password
+        returnToStaff('success', "Staff added successfully! Username: '{$username}' Password: {$rawPassword}");
+
+    } else if ($action == 'edit') { // Update existing staff and user account in database
+        $statement =$conn->prepare('SELECT staffID FROM staff WHERE staffID = ?');
+        $statement->bind_param('i',$staffID);
+        $statement->execute();$statement->store_result();
+        $staffExists =$statement->num_rows > 0;
         $statement->close();
-        if (!$staffExists) {
-            $conn->close();
+        
+        if (!$staffExists) {$conn->close();
             returnToStaff('error', 'The selected staff member no longer exists.');
         }
+
+        // Check if the username is already taken by *another* user account
+        $checkUser =$conn->prepare('SELECT userID FROM `user` WHERE userName = ? AND staffID != ? LIMIT 1');
+        $checkUser->bind_param('si', $username,$staffID);
+        $checkUser->execute();$checkUser->store_result();
+        $usernameTaken =$checkUser->num_rows > 0;
+        $checkUser->close();
+
+        if ($usernameTaken) {$conn->close();
+            returnToStaff('error', 'This username is already taken by another account.');
+        }
+
+        $conn->begin_transaction();
+
+        // 1. Update Staff Table (10 parameters + 1 staffID = 11 values total)
         $sql = 'UPDATE staff SET staffType = ?, lastName = ?, firstName = ?, address = ?, contactNo = ?, employmentStatus = ?, dateJoined = ?, dateSeparated = ?, imageData = COALESCE(?, imageData), imageMime = COALESCE(?, imageMime) WHERE staffID = ?';
-        $statement = $conn->prepare($sql);
-        $image = uploadStaffImage();
-        $imageData = $image['data'] ?? null;
-        $imageMime = $image['mime'] ?? null;
-        $statement->bind_param('ssssssssssi', $staffType, $lastName, $firstName, $address, $contactNo, $employmentStatus, $dateJoined, $dateSeparated, $imageData, $imageMime, $staffID);
-        $statement->execute();
-        $statement->close();
-        $conn->close();
-        returnToStaff('success', 'Staff updated successfully.');
+        $statement =$conn->prepare($sql);$image = uploadStaffImage();
+        $imageData =$image['data'] ?? null;
+        $imageMime =$image['mime'] ?? null;
+        $statement->bind_param('ssssssssssi',$staffType, $lastName,$firstName, $address,$contactNo, $employmentStatus,$dateJoined, $dateSeparated,$imageData, $imageMime,$staffID);
+        $statement->execute();$statement->close();
+
+        // 2. Update User Table Username
+        $userSql = 'UPDATE `user` SET userName = ? WHERE staffID = ?';
+        $userStmt =$conn->prepare($userSql);$userStmt->bind_param('si', $username,$staffID);
+        $userStmt->execute();$userStmt->close();
+
+        $conn->commit();$conn->close();
+
+        returnToStaff('success', 'Staff and user account updated successfully.');
     }
-} catch (mysqli_sql_exception $error) { //js in case bai
+} catch (mysqli_sql_exception $error) {
+    if (isset($conn) and$conn instanceof mysqli) {
+        @$conn->rollback();
+    }
     error_log('Staff save failed: ' . $error->getMessage());
     returnToStaff('error', 'Unable to save the staff. Please try again.');
 } catch (RuntimeException $error) {
+    if (isset($conn) and$conn instanceof mysqli) {
+        @$conn->rollback();
+    }
     returnToStaff('error', $error->getMessage());
 }

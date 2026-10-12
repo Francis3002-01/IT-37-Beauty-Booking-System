@@ -31,6 +31,7 @@ function beauticianText($value)
 {
     return htmlspecialchars((string) $value, ENT_QUOTES); //type errorr guard. htmlspecialchars convert, en_quotes converts '"
 }
+$isAdmin = (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin');
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -52,7 +53,10 @@ function beauticianText($value)
         <?php endif; ?>
         <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3">
             <input type="text" id="searchInput" class="search-pill" placeholder="Search Beauticians..." oninput="filterBeauticians()">
-            <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Beautician</button>
+            
+            <?php if ($isAdmin): ?>
+                <button type="button" class="btn btn-create" onclick="openCreateModal()">Add New Beautician</button>
+            <?php endif; ?>
         </div>
         <div class="d-flex gap-3 mb-4 flex-wrap">
             <div>
@@ -120,11 +124,15 @@ function beauticianText($value)
                         </div>
                         <div class="border-top pt-3 d-flex justify-content-end gap-2 flex-wrap">
                             <button type="button" class="btn btn-sm btn-outline-dark px-3 rounded-pill" onclick="viewBeautician(<?php echo (int) $beautician['beauticianID']; ?>)">VIEW</button>
-                            <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editBeautician(<?php echo (int) $beautician['beauticianID']; ?>)">EDIT</button>
-                            <form method="POST" action="backend%20logic/beauticians_backend.php" onsubmit="return confirmBeauticianDelete()" class="d-inline">
-                                <input type="hidden" name="action" value="delete"><input type="hidden" name="beauticianID" value="<?php echo (int) $beautician['beauticianID']; ?>">
-                                <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">DELETE</button>
-                            </form>
+                            
+                            <!-- Only show EDIT and DELETE if the user is an Admin -->
+                            <?php if (isset($_SESSION['user_role']) && $_SESSION['user_role'] === 'admin'): ?>
+                                <button type="button" class="btn btn-sm btn-outline-secondary px-3 rounded-pill" onclick="editBeautician(<?php echo (int) $beautician['beauticianID']; ?>)">EDIT</button>
+                                <form method="POST" action="backend%20logic/beauticians_backend.php" onsubmit="return confirmBeauticianDelete()" class="d-inline">
+                                    <input type="hidden" name="action" value="delete"><input type="hidden" name="beauticianID" value="<?php echo (int) $beautician['beauticianID']; ?>">
+                                    <button type="submit" class="btn btn-sm btn-outline-danger px-3 rounded-pill">DELETE</button>
+                                </form>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
