@@ -5,7 +5,8 @@ if (session_status() !== PHP_SESSION_ACTIVE) {
 require_once 'config/database.php';
 require_once 'includes/booking.php';
 date_default_timezone_set('Asia/Manila');
-bookingLogin($conn);
+$reportUser = bookingLogin($conn);
+$isAdmin = strtolower($reportUser['role']) == 'admin';
 $period = bookingValue($_GET, 'period');
 $today = new DateTimeImmutable('today');
 if ($period == 'Daily') {
@@ -20,7 +21,7 @@ if ($period == 'Daily') {
     $end = $today->format('Y-m-t');
 }
 $error = '';
-if (isset($_GET['from']) || isset($_GET['to'])) {
+if ($isAdmin && (isset($_GET['from']) || isset($_GET['to']))) {
     $from = bookingValue($_GET, 'from');
     $to = bookingValue($_GET, 'to');
     if (bookingDate($from) && bookingDate($to) && $from <= $to) {
@@ -79,8 +80,7 @@ $perClient = bookingQuery(
         <?php include 'includes/sidebar.php'; ?>
         <div class="main-content">
             <div class="dashboard-card">
-                <h1 class="fw-bold fs-3">Reports</h1>
-                <p class="text-muted">Appointments, payments received and outstanding balances.</p>
+                <h1 class="fw-bold fs-3 mb-4">Reports</h1>
                 <?php if ($error): ?>
                 <div class="alert alert-danger"><?php echo bookingText(
                     $error
@@ -95,13 +95,14 @@ $perClient = bookingQuery(
                             echo 'active';
                         } ?>"
                         href="reports.php?period=<?php echo $choice; ?>"
-                        ><?php echo $choice; ?></a
+                        ><?php echo ['Daily' => 'Today', 'Weekly' => 'This Week', 'Monthly' => 'This Month'][$choice]; ?></a
                     ><?php endforeach; ?>
                 </div>
-                <form method="GET" class="d-flex align-items-end flex-wrap gap-3 mb-4">
+                <?php if ($isAdmin): ?>
+                <form method="GET" class="report-range-controls d-flex align-items-end flex-wrap gap-3 mb-1">
                     <input type="hidden" name="period" value="<?php echo $period; ?>" />
                     <div>
-                        <label class="form-label" for="fromDate">From</label
+                        <label class="form-label fw-semibold" for="fromDate">From</label
                         ><input
                             id="fromDate"
                             type="date"
@@ -112,7 +113,7 @@ $perClient = bookingQuery(
                         />
                     </div>
                     <div>
-                        <label class="form-label" for="toDate">To</label
+                        <label class="form-label fw-semibold" for="toDate">To</label
                         ><input
                             id="toDate"
                             type="date"
@@ -122,7 +123,12 @@ $perClient = bookingQuery(
                             required
                         />
                     </div>
+                    <button class="btn btn-create">Generate Reports</button>
                 </form>
+                <p class="text-muted mt-1 mb-4" style="font-size: 0.75rem;">
+                    Generate a report for a certain date range.
+                </p>
+                <?php endif; ?>
                 <div class="report-section-card p-4 mb-4">
                     <h2 class="fs-5">Appointment Statistics</h2>
                     <p class="text-muted small">
@@ -153,11 +159,6 @@ $perClient = bookingQuery(
                         </div>
                         <?php endforeach; ?>
                     </div>
-                    <p class="small text-muted mt-3 mb-0">
-                        Outstanding balance covers non-cancelled appointments scheduled within these
-                        dates. Payments received may belong to appointments scheduled outside this
-                        range.
-                    </p>
                 </div>
                 <div class="row g-4">
                     <div class="col-md-6">

@@ -71,6 +71,9 @@ function initializeAppointmentForm() {
     updateAppointmentPrice();
     filterAppointments();
     const modal = document.getElementById('appointmentModal');
+    if (modal.getAttribute('data-no-available') === 'yes') {
+        alert('No available beauticians found. Please choose a different date or time.');
+    }
     if (modal.getAttribute('data-open') === 'yes')
         bootstrap.Modal.getOrCreateInstance(modal).show();
 }

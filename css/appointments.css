@@ -208,3 +208,16 @@ body {
     background-color: #e9ecef;
     color: #212529;
 }
+
+/* Secondary action for checking appointment availability */
+.btn-check-availability {
+    background-color: #495057;
+    color: #ffffff;
+    padding: 10px 24px;
+    font-weight: 500;
+    border: none;
+}
+.btn-check-availability:hover {
+    background-color: #5c636a;
+    color: #ffffff;
+}
