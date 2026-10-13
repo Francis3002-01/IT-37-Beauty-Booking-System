@@ -23,7 +23,7 @@ body {
 .sidebar {
     width: 260px;
     min-height: 100vh;
-    background-color: #ffffff;
+    background: radial-gradient(circle at 0% 0%, #f5e9ec, #ffede7, #ffffff);
     border-right: 1px solid #e9ecef;
     position: fixed;
     top: 0;
@@ -58,10 +58,9 @@ body {
     margin-bottom: 4px;
     transition: all 0.2s ease;
 }
-.nav-link:hover,
 .nav-link.active {
-    background-color: #f1f3f5;
-    color: #000000;
+    background-color: #eedfe3;
+    color: #343a40;
 }
 .nav-link.active {
     font-weight: 600;
@@ -93,7 +92,7 @@ body {
     max-width: 320px;
 }
 .btn-create {
-    background-color: #212529;
+    background-color: #a9446b;
     color: #ffffff;
     border-radius: 50rem;
     padding: 10px 24px;
@@ -101,7 +100,7 @@ body {
     border: none;
 }
 .btn-create:hover {
-    background-color: #343a40;
+    background-color: #bc587e;
     color: #ffffff;
 }
 .filter-pill {
@@ -220,4 +219,53 @@ body {
 .btn-check-availability:hover {
     background-color: #5c636a;
     color: #ffffff;
+}
+
+.nav-link:hover {
+    background-color: #eedfe3;
+    color: #343a40;
+}
+
+/* Sidebar account name and sign out button */
+.sidebar-user-name {
+    color: #a9446b;
+}
+.sidebar-sign-out {
+    background-color: #a9446b;
+    border-color: #a9446b;
+    color: #ffffff;
+    border-radius: 8px;
+}
+.sidebar-sign-out:hover {
+    background-color: #bc587e;
+    border-color: #bc587e;
+    color: #ffffff;
+}
+
+/* Appointment statuses; payment badge colors are separate */
+.appointment-status-pending {
+    background-color: #f3b69b;
+    color: #ffffff;
+}
+.appointment-status-completed {
+    background-color: #ee70a8;
+    color: #ffffff;
+}
+.appointment-status-cancelled {
+    background-color: #6c757d;
+    color: #ffffff;
+}
+.appointment-status-confirmed {
+    background-color: #212529;
+    color: #ffffff;
+}
+
+/* Gradient text on the active sidebar link */
+.nav-link.active .sidebar-link-text {
+    font-weight: 700;
+    background: radial-gradient(circle at 0% 0%, #f3b69b, #ee70a8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }

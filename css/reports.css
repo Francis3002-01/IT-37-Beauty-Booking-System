@@ -23,7 +23,7 @@ body {
 .sidebar {
     width: 260px;
     min-height: 100vh;
-    background-color: #ffffff;
+    background: radial-gradient(circle at 0% 0%, #f5e9ec, #ffede7, #ffffff);
     border-right: 1px solid #e9ecef;
     position: fixed;
     top: 0;
@@ -68,10 +68,9 @@ body {
     padding-left: 20px; /* Adjust this px value if your other stylesheets use a different indentation */
 }
 
-.nav-link:hover, 
 .nav-link.active {
-    background-color: #f1f3f5;
-    color: #000000;
+    background-color: #eedfe3;
+    color: #343a40;
 }
 
 .nav-link.active {
@@ -111,7 +110,7 @@ body {
 }
 
 .btn-create {
-    background-color: #212529;
+    background-color: #a9446b;
     color: #ffffff;
     border-radius: 50rem;
     padding: 10px 24px;
@@ -121,7 +120,7 @@ body {
 }
 
 .btn-create:hover {
-    background-color: #343a40;
+    background-color: #bc587e;
     color: #ffffff;
 }
 
@@ -287,7 +286,7 @@ body {
 .stat-number {
     font-size: 2.25rem;
     font-weight: 800;
-    color: #000000;
+    color: #a9446b;
     letter-spacing: -1px;
     line-height: 1.1;
     margin-bottom: 6px;
@@ -351,4 +350,35 @@ body {
     padding: 16px 20px;
     width: fit-content;
     max-width: 100%;
+}
+
+.nav-link:hover {
+    background-color: #eedfe3;
+    color: #343a40;
+}
+
+/* Sidebar account name and sign out button */
+.sidebar-user-name {
+    color: #a9446b;
+}
+.sidebar-sign-out {
+    background-color: #a9446b;
+    border-color: #a9446b;
+    color: #ffffff;
+    border-radius: 8px;
+}
+.sidebar-sign-out:hover {
+    background-color: #bc587e;
+    border-color: #bc587e;
+    color: #ffffff;
+}
+
+/* Gradient text on the active sidebar link */
+.nav-link.active .sidebar-link-text {
+    font-weight: 700;
+    background: radial-gradient(circle at 0% 0%, #f3b69b, #ee70a8);
+    background-clip: text;
+    -webkit-background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
 }

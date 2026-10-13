@@ -2,7 +2,6 @@
 
 session_start();
 
-
 require_once 'config/database.php';
 
 $updateMessage = $_SESSION['profile_message'] ?? '';
