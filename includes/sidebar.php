@@ -16,17 +16,17 @@ $currentPage = basename($_SERVER['PHP_SELF']);
         
         <div class="nav-section-title">My Panel</div>
         <nav class="nav flex-column">
-            <a class="nav-link <?php echo ($currentPage == 'appointments.php') ? 'active' : 'sub-nav'; ?>" href="appointments.php">Appointments</a>
-            <a class="nav-link <?php echo ($currentPage == 'beauticians.php') ? 'active' : 'sub-nav'; ?>" href="beauticians.php">Beauticians</a>
-            <a class="nav-link <?php echo ($currentPage == 'services.php') ? 'active' : 'sub-nav'; ?>" href="services.php">Services</a>
-            <a class="nav-link <?php echo ($currentPage == 'clients.php') ? 'active' : 'sub-nav'; ?>" href="clients.php">Clients</a>
-            <a class="nav-link <?php echo ($currentPage == 'reports.php') ? 'active' : 'sub-nav'; ?>" href="reports.php">Reports</a>
-            <a class="nav-link <?php echo ($currentPage == 'staff.php') ? 'active' : 'sub-nav'; ?>" href="staff.php">Staff</a>
+            <a class="nav-link <?php echo ($currentPage == 'appointments.php') ? 'active' : 'sub-nav'; ?>" href="appointments.php"><span class="sidebar-link-text">Appointments</span></a>
+            <a class="nav-link <?php echo ($currentPage == 'beauticians.php') ? 'active' : 'sub-nav'; ?>" href="beauticians.php"><span class="sidebar-link-text">Beauticians</span></a>
+            <a class="nav-link <?php echo ($currentPage == 'services.php') ? 'active' : 'sub-nav'; ?>" href="services.php"><span class="sidebar-link-text">Services</span></a>
+            <a class="nav-link <?php echo ($currentPage == 'clients.php') ? 'active' : 'sub-nav'; ?>" href="clients.php"><span class="sidebar-link-text">Clients</span></a>
+            <a class="nav-link <?php echo ($currentPage == 'reports.php') ? 'active' : 'sub-nav'; ?>" href="reports.php"><span class="sidebar-link-text">Reports</span></a>
+            <a class="nav-link <?php echo ($currentPage == 'staff.php') ? 'active' : 'sub-nav'; ?>" href="staff.php"><span class="sidebar-link-text">Staff</span></a>
         </nav>
 
         <div class="nav-section-title mt-4">My Account</div>
         <nav class="nav flex-column">
-            <a class="nav-link <?php echo ($currentPage == 'profile-settings.php') ? 'active' : ''; ?>" href="profile-settings.php">Profile Settings</a>
+            <a class="nav-link <?php echo ($currentPage == 'profile-settings.php') ? 'active' : ''; ?>" href="profile-settings.php"><span class="sidebar-link-text">Profile Settings</span></a>
         </nav>
     </div>
 
@@ -36,12 +36,12 @@ $currentPage = basename($_SERVER['PHP_SELF']);
             <div class="d-flex align-items-center gap-2">
                 <div class="avatar-circle"></div>
                 <div>
-                    <h6 class="mb-0 fw-bold"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['username'] ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?></h6>
+                    <h6 class="mb-0 fw-bold sidebar-user-name"><?php echo htmlspecialchars($_SESSION['user_name'] ?? $_SESSION['username'] ?? 'Guest', ENT_QUOTES, 'UTF-8'); ?></h6>
                     <small class="text-muted"><?php echo htmlspecialchars($_SESSION['user_role'] ?? '', ENT_QUOTES, 'UTF-8'); ?></small>
                 </div>
             </div>
             <!-- Black Sign Out Button -->
-            <a href="includes/logout.php" class="btn btn-sm btn-dark" title="Sign Out">
+            <a href="includes/logout.php" class="btn btn-sm sidebar-sign-out" title="Sign Out">
                 <i class="bi bi-box-arrow-right"></i> Sign Out
             </a>
         </div>

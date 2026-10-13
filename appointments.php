@@ -194,7 +194,7 @@ $openForm = boolval($form) || isset($_GET['check']);
                         <div class="appointment-item-card h-100 mb-0">
                             <h2 class="fs-5 fw-bold mb-2">Appointment #<?php echo $id; ?></h2>
                             <div class="d-flex gap-2 flex-wrap mb-3">
-                                <span class="badge bg-dark fw-bold"><?php echo bookingText(
+                                <span class="badge fw-bold appointment-status-<?php echo strtolower(bookingText($appointment['appointmentStatus'])); ?>"><?php echo bookingText(
                                       $appointment['appointmentStatus']
                                   ); ?></span
                                 ><span class="badge fw-bold <?php echo $paymentStatus == 'Paid'
@@ -231,7 +231,7 @@ $openForm = boolval($form) || isset($_GET['check']);
                                       2
                                   ); ?>
                             </p>
-                            <div class="border-top pt-3 d-flex flex-wrap gap-2">
+                            <div class="border-top pt-3 d-flex flex-wrap gap-1">
                                 <button
                                     type="button"
                                     class="btn btn-sm btn-outline-dark rounded-pill"
@@ -250,7 +250,7 @@ $openForm = boolval($form) || isset($_GET['check']);
                                 </button>
                             </div>
                             <?php if ($active): ?>
-                            <div class="d-flex flex-wrap gap-2 mt-3">
+                            <div class="d-flex flex-wrap gap-1 mt-2">
                                 <?php if (
                                        $admin
                                    ): ?><a
@@ -261,7 +261,7 @@ $openForm = boolval($form) || isset($_GET['check']);
                                 <form
                                     method="POST"
                                     action="backend%20logic/appointment_backend.php"
-                                    class="d-flex flex-wrap gap-2"
+                                    class="d-flex flex-wrap gap-1"
                                     onsubmit="return confirm('Change this appointment status?');"
                                 >
                                     <?php bookingTokenField(); ?><input
