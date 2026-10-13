@@ -2,7 +2,6 @@
 
 session_start();
 
-
 require_once 'config/database.php';
 
 $updateMessage = $_SESSION['profile_message'] ?? '';
@@ -192,7 +191,7 @@ $pageTitle = "Profile Settings - beautyReserve";
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" rel="stylesheet">
 
     <!-- Custom Page Stylesheet (Includes sidebar and layout styles) -->
-    <link href="css/profile-settings.css?v=<?php echo filemtime(__DIR__ . '/css/profile-settings.css'); ?>" rel="stylesheet">
+    <link href="css/profile-settings.css" rel="stylesheet">
 </head>
 
 <body>
